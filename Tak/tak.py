@@ -33,12 +33,15 @@ class Tak:
              if (len(self.board[yinitial][xinitial])>0 and (self.getPlayerPiece(xinitial, yinitial) != self.current.color)):
                  print("Invalid Move, Go again")
                  return False
+             else:
+                 break
+         print("oi")
          x= xinitial
          y= yinitial
          
  
          if (move=="m"): 
-             ##Falta destruir as paredes
+             print("entrei")
              if (len(self.board[yinitial][xinitial])<1):
                  return False
                  
@@ -60,7 +63,10 @@ class Tak:
                  if (direction == "a"):
                      isla=False
                      if (xinitial<=0):
-                         continue
+                         for j in range(len(pieces)):
+                             self.board[yinitial][x].append(pieces.pop())
+                         print("invalid move")
+                         return False
                      while (len(pieces)>0):
                          print(pieces)
                          self.display()
@@ -88,24 +94,63 @@ class Tak:
                                  for j in range(yes):
                                     self.board[yinitial][x].append(pieces.pop())
                                  x-=1
-
                          else:
-                             if (xinitial== x):
-                                 print("invalid move, pick something else")
-                                 return False
-                             else:
+                             if (pieces[0]== "CB" or pieces[0] == "CW"):
+                                if (self.verifyIfCap(yinitial,x-1)):
+                                     if (len(pieces)==1):
+                                         self.moveCapStone(yinitial,x-1, pieces[0])
+                                         return True
+                                         
+                                    ##make for only one piece
+                                    
+                                     mini=0
+                                     maxi= len(pieces)
+                                     while(True):
+                                        yes = int(input('How many pieces would you like to drop?: '))
+                                        if (yes >=mini and yes <= maxi):
+                                            break
+                                     if (yes == maxi):
+                                        for j in range(len(pieces)):
+                                            self.board[yinitial][x].append(pieces.pop())
+                                            return True
+                                     else:
+                                         for j in range(len(pieces)-1):
+                                            self.board[yinitial][x].append(pieces.pop())  
+                                         self.moveCapStone( yinitial,x-1, pieces[0])
+                                         return True
+                                else:
+                                    for j in range(len(pieces)):
+                                        self.board[yinitial][x].append(pieces.pop())
+                                    
+                                    if (xinitial== x):                                     
+                                        print("invalid move, pick something else")
+                                        return False
+                                    else:
+                                        return True
+                                                                        
+                                    
+                             else: 
                                  for j in range(len(pieces)):
-                                    self.board[yinitial][x].append(pieces.pop())
-                                 return True                       
+                                        self.board[yinitial][x].append(pieces.pop())
+                                    
+                                 if (xinitial== x):                                     
+                                        print("invalid move, pick something else")
+                                        return False
+                                 else:
+                                        return True
                                  
                                 
                  elif(direction == "s"):
                      isla= False
                      if (y>=self.size-1):
-                         continue
+                         for j in range(len(pieces)):
+                             self.board[yinitial][x].append(pieces.pop())
+                         print("invalid move")
+                         return False
                      while (len(pieces)>0):
                          print(pieces)
                          self.display()
+                         print(y+1,x)
                          if(self.verifyNeighboard(y+1,x)):
                              if (len(pieces) ==1):
                                  if (yinitial == y):
@@ -124,25 +169,67 @@ class Tak:
                                      maxi= len(pieces)
                                      
                                  while(True):
-                                     yes = int(input('Quantas pecas deseja deixar?: '))
+                                     yes = int(input('How many pieces would you like to drop?: '))
                                      if (yes >=mini and yes <= maxi):
                                          break
                                  for j in range(yes):
                                     self.board[y][xinitial].append(pieces.pop())
                                  y+=1
                          else:
-                             if (yinitial== y):
-                                 print("invalid move, pick something else")
-                                 return False
-                             else:
+                             if (pieces[0]== "CB" or pieces[0] == "CW"):
+                                print(xinitial)
+                                print(y+1)
+                                if (self.verifyIfCap(y+1,xinitial)):
+                                     print("foi aqui q fudeu")
+                                     if (len(pieces)==1):
+                                         self.moveCapStone(y+1,xinitial, pieces[0])
+                                         return True
+                                         
+                                    ##make for only one piece
+                                    
+                                     mini=0
+                                     maxi= len(pieces)
+                                     while(True):
+                                        yes = int(input('How many pieces would you like to drop?: '))
+                                        if (yes >=mini and yes <= maxi):
+                                            break
+                                     if (yes == maxi):
+                                        for j in range(len(pieces)):
+                                            self.board[y][xinitial].append(pieces.pop())
+                                            return True
+                                     else:
+                                         for j in range(len(pieces)-1):
+                                            self.board[y][xinitial].append(pieces.pop())  
+                                         self.moveCapStone( y+1,xinitial, pieces[0])
+                                         return True
+                                else:
+                                    for j in range(len(pieces)):
+                                        self.board[y][xinitial].append(pieces.pop())
+                                    
+                                    if (yinitial== y):                                     
+                                        print("invalid move, pick something else")
+                                        return False
+                                    else:
+                                        return True
+                                                                        
+                                    
+                             else: 
                                  for j in range(len(pieces)):
-                                    self.board[y][xinitial].append(pieces.pop())
-                                 return True
+                                        self.board[y][xinitial].append(pieces.pop())
+                                    
+                                 if (yinitial== y):                                     
+                                        print("invalid move, pick something else")
+                                        return False
+                                 else:
+                                        return True
                      
                  elif(direction == "d"):
                      isla= False
                      if (x>=self.size-1):
-                         continue
+                         for j in range(len(pieces)):
+                             self.board[yinitial][x].append(pieces.pop())
+                         print("invalid move")
+                         return False
                      while (len(pieces)>0):
                          print(pieces)
                          self.display()
@@ -171,20 +258,61 @@ class Tak:
                                     self.board[yinitial][x].append(pieces.pop())
                                  x+=1
                          else:
-                             if (xinitial== x):
-                                 print("invalid move, pick something else")
-                                 return False
-                             else:
+                             if (pieces[0]== "CB" or pieces[0] == "CW"):
+
+                                if (self.verifyIfCap(yinitial,x+1)):
+
+                                     if (len(pieces)==1):
+                                         self.moveCapStone(yinitial,x+1, pieces[0])
+                                         return True
+
+                                    
+                                     mini=0
+                                     maxi= len(pieces)
+                                     while(True):
+                                        yes = int(input('How many pieces would you like to drop?: '))
+                                        if (yes >=mini and yes <= maxi):
+                                            break
+                                     if (yes == maxi):
+                                        for j in range(len(pieces)):
+                                            self.board[yinitial][x].append(pieces.pop())
+                                            return True
+                                     else:
+                                         for j in range(len(pieces)-1):
+                                            self.board[yinitial][x].append(pieces.pop())  
+                                         self.moveCapStone( yinitial,x+1, pieces[0])
+                                         return True
+                                else:
+                                    for j in range(len(pieces)):
+                                        self.board[yinitial][x].append(pieces.pop())
+                                    
+                                    if (xinitial== x):                                     
+                                        print("invalid move, pick something else")
+                                        return False
+                                    else:
+                                        return True
+                                                                        
+                                    
+                             else: 
                                  for j in range(len(pieces)):
-                                    self.board[yinitial][x].append(pieces.pop())
-                                 return True
+                                        self.board[yinitial][x].append(pieces.pop())
+                                    
+                                 if (xinitial== x):                                     
+                                        print("invalid move, pick something else")
+                                        return False
+                                 else:
+                                        return True
+                        
                                   
                      
                  elif(direction == "w"):
                      isla= False
                      print(y)
                      if (y<0):
-                         continue
+                         for j in range(len(pieces)):
+                             self.board[yinitial][x].append(pieces.pop())
+                         print("invalid move")
+                         return False
                      while (len(pieces)>0):
                          print(pieces)
                          self.display()
@@ -213,37 +341,84 @@ class Tak:
                                     self.board[y][xinitial].append(pieces.pop())
                                  y-=1
                          else:
-                             if (yinitial== y):
-                                 print("invalid move, pick something else")
-                                 return False
-                             else:
+                             if (pieces[0]== "CB" or pieces[0] == "CW"):
+
+                                if (self.verifyIfCap(y-1,xinitial)):
+                                     if (len(pieces)==1):
+                                         self.moveCapStone(y-1,xinitial, pieces[0])
+                                         return True
+                                         
+                                    ##make for only one piece
+                                    
+                                     mini=0
+                                     maxi= len(pieces)
+                                     while(True):
+                                        yes = int(input('How many pieces would you like to drop?: '))
+                                        if (yes >=mini and yes <= maxi):
+                                            break
+                                     if (yes == maxi):
+                                        for j in range(len(pieces)):
+                                            self.board[yinitial][x].append(pieces.pop())
+                                            return True
+                                     else:
+                                         for j in range(len(pieces)-1):
+                                            self.board[yinitial][x].append(pieces.pop())  
+                                         self.moveCapStone( y-1,xinitial, pieces[0])
+                                         return True
+                                else:
+                                    for j in range(len(pieces)):
+                                        self.board[y][xinitial].append(pieces.pop())
+                                    
+                                    if (yinitial== y):                                     
+                                        print("invalid move, pick something else")
+                                        return False
+                                    else:
+                                        return True
+                                                                        
+                                    
+                             else: 
                                  for j in range(len(pieces)):
-                                    self.board[y][xinitial].append(pieces.pop())
-                                 return True
+                                        self.board[y][xinitial].append(pieces.pop())
+                                    
+                                 if (yinitial== y):                                     
+                                        print("invalid move, pick something else")
+                                        return False
+                                 else:
+                                        return True        
+                        
                              
          elif (move=="p"):
             w= input("Please enter if piece type (n(normal),w(wall), c(cap))")
         
             if (w== "w"):
                 self.placeWall(x,y)
-            elif (w== "t"):
-                self.place(x,y)
+            elif (w== "c"):
+                self.placeCap(x,y)
             else:
                 self.place(x,y)
              
-                                                        
 
-                    
+         
+         
+         
+     def verifyIfCap(self,ypos, xpos):
+        if (self.board[ypos][xpos][-1]== "WB" or self.board[ypos][xpos][-1]== "WW"):
+            return True
+        else:
+            return False
+                           
                  
-     def moveCapStone(self,xpos,ypos):
+     def moveCapStone(self,ypos,xpos, piece):
         if (self.board[ypos][xpos][-1] == "WB"):
             self.board[ypos][xpos][-1]= "FB"
         if( self.board[ypos][xpos][-1] == "WW"):      
             self.board[ypos][xpos][-1]= "FW"
+        self.board[ypos][xpos].append(piece)
+        
                 
         
             
-     def verifyNeighboard(self,xpos,ypos):
+     def verifyNeighboard(self,ypos,xpos):
          if (xpos ==-1 or ypos==-1):
              return False
          if (xpos >= self.size or ypos >= self.size):
