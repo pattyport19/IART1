@@ -7,6 +7,7 @@ Created on Sun Mar 14 19:23:13 2021
 import Player
 import SinglePlay
 import HeuristicaFim
+import copy
 
 
      
@@ -503,7 +504,6 @@ class Tak:
         
      def place(self, xpos, ypos):
         if not self.board[ypos][xpos]:
-            print(ypos, xpos)
             self.board[ypos][xpos].append("F"+self.current.color)
             self.current.addPiece()
             return 0
@@ -512,12 +512,13 @@ class Tak:
     
     
      def placeCap(self, xpos, ypos):
-        if not self.board[ypos][xpos]:
-            self.board[ypos][xpos].append("C"+self.current.color)
-            self.current.addCapStone()
-            return 0
-        else:
-            return -1
+        if not self.board[ypos][xpos]: #se estiver vazio
+            if not self.current.getCapStoneUsed(): #se ainda nao tiver usado a capStone
+                self.board[ypos][xpos].append("C"+self.current.color)
+                self.current.addCapStone()
+                return 0
+
+        return -1
          
          
 
@@ -811,6 +812,124 @@ class Tak:
             self.current= self.Player2
         else:
             self.current= self.Player1
+            
+    #this code is for the functions of MinMax
+     def nextPosMoves (self, board, curPlayer):
+         jogadas =[]
+         for i in range (self.size): #row = y
+             for j in range (self.size): #column =x
+                 tempBoard = copy.deepcopy(board)
+                 if (len(tempBoard[i][j]) ==0): #if empty
+                     tempBoard[i][j].append("F"+curPlayer.color)
+                     jogadas.append(tempBoard)
+                     tempBoard= copy.deepcopy(board)
+                     tempBoard[i][j].append("W"+curPlayer.color)
+                     jogadas.append(tempBoard)
+                     tempBoard= copy.deepcopy(board)
+                     if not curPlayer.getCapStoneUsed():
+                         tempBoard[i][j].append("C"+curPlayer.color)
+                         jogadas.append(tempBoard)
+                         tempBoard= copy.deepcopy(board)
+                 elif(board[i][j][-1][-1] == curPlayer.color):
+                     npecas = len(board[i][j])
+                     if (npecas> self.size):
+                         npecas = self.size
+                     #ncasas order L R T B
+                     ncasas = self.genNcasas(i,j,board)
+                     print(ncasas)
+                     
+         for i in range(len(jogadas)):
+            print(jogadas[i][0])
+            print(jogadas[i][1])
+            print(jogadas[i][2]) 
+            print("next")
+                               
+
+
+     def genNcasas(self,x,y,board):
+        #x-
+        ncasas=[]
+        temp =0
+        
+        for i in range(x-1,-1, -1):
+            if (len(board[i][y])>0):
+                if (board[i][y][-1][0] == "W"):
+                    if (board[x][y][-1][0] == "C"): #top piece is capStone
+                        temp +=1
+                        break
+                    else:
+                        break
+                elif (board[i][y][-1][0] == "C"):
+                    break
+                elif(board[i][y][-1][0] == "F"):
+                    temp+=1
+            else:
+                temp+=1                
+        ncasas.append(temp)       
+        temp =0   
+        #x+
+        
+        for i in range(x+1,self.size):
+            if (len(board[i][y])>0):
+                
+                if (board[i][y][-1][0] == "W"):
+                    if (board[x][y][-1][0] == "C"): #top piece is capStone
+                        temp +=1
+                        break
+                    else:
+                        break
+                elif (board[i][y][-1][0] == "C"):
+                    break
+                elif(board[i][y][-1][0] == "F"):
+                    temp+=1
+            else:
+                temp+=1
+        
+        ncasas.append(temp)
+        #y-
+        temp =0
+        for i in range(y-1,-1, -1):
+            if (len(board[x][i])>0):
+                
+                if (board[x][i][-1][0] == "W"):
+                    if (board[x][y][-1][0] == "C"): #top piece is capStone
+                        temp +=1
+                        break
+                    else:
+                        break
+                elif (board[x][i][-1][0] == "C"):
+                    break
+                elif(board[x][i][-1][0] == "F"):
+                    temp+=1
+            else:
+                temp+=1            
+        ncasas.append(temp)
+        #y+ 
+        temp =0
+
+        for i in range(y+1,self.size):
+            if (len(board[x][i])>0):
+                
+                if (board[x][i][-1][0] == "W"):
+                    if (board[x][y][-1][0] == "C"): #top piece is capStone
+                        temp +=1
+                        break
+                    else:
+                        break
+                elif (board[x][i][-1][0] == "C"):
+                    break
+                elif(board[x][i][-1][0] == "F"):
+                    temp+=1
+            else:
+                temp+=1
+        ncasas.append(temp)
+
+        return ncasas      
+
+         
+     
+
+         
     
     
 

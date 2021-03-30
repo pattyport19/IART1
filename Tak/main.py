@@ -10,7 +10,18 @@ import tak
 
 
 def main():
+    game = tak.Tak(3)
+    game.place(0,0)
+    game.place(1,1)
+    game.place(0,1)
+    game.placeWall(1,2)
+    #game.placeWall(2,2)
+    game.nextPosMoves(game.board, game.current)    
+    game.display()
     
+    game.genNcasas(1,1, game.board)
+    
+    """
     game= tak.Tak(3)
 
     
@@ -26,6 +37,6 @@ def main():
             temp= False
 
         game.switch()
-            
+  """          
     
 main()

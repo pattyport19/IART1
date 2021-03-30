@@ -26,6 +26,9 @@ class Player:
     
     def getColor(self):
         return self.color
+    
+    def getCapStoneUsed(self):
+        return self.capStoneUsed
         
     def addPiece(self):
         self.piecesused+=1
