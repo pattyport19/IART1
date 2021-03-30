@@ -614,10 +614,7 @@ class Tak:
              if (x == self.size-1):
                  return True
          if (h.margemy0):
-            print("verifyFound1")
-            print(y)
             if (y ==0):
-                print("verifyFound2")
                 return True
          if (h.margemyn):
              if (y == self.size-1):
@@ -660,9 +657,7 @@ class Tak:
                              if (countery0 < counterxn and countery0 < counterx0 and countery0 < counteryn):
                                 pick = i         
              if (h.margemyn):
-                 print("cheguei aqui")
                  for i in range (len(nosAVisitar)):
-                     print("entrou")
                      if (nosAVisitar[i][1] == self.size-1 ):
                          return i
                      else:
@@ -691,42 +686,31 @@ class Tak:
          me = [x,y]
          print(me)
          if (me in self.nosVisitados):
-             print("heckNode")
              return False  ##False
          if (len(self.board[x][y]) <=0):  #put it back when its done
-            print(x,y)
-            print("checkNOdeV")
             return False
          if (self.board[x][y][-1][-1] != self.current.color):  
-             print("checkNode")
              return False  #False
          if (self.board[x][y][-1][1] == "W"):  ##check if this is working
-             print("checkNode")
              return False  #False
          return True  #True 
         
      def addAdjNodes(self, xinitial ,yinitial ):
         if (xinitial > 0):
-             print("devia vir aqui")
              no = [xinitial-1, yinitial]
              if (self.checkNodeValid(xinitial-1, yinitial)):
-                 print("nothere")
                  self.nosAVisitar.append(no)
         if (yinitial >0):
              no = [xinitial, yinitial-1]
-             print("devia vir aqui")
              if (self.checkNodeValid(xinitial, yinitial-1)):
-                 print("addAdj1")
                  self.nosAVisitar.append(no)
         if (xinitial < self.size-1):
              no = [xinitial +1 , yinitial]
              if (self.checkNodeValid(xinitial+1, yinitial)):
-                 print("nothereplz")
                  self.nosAVisitar.append(no)
         if (yinitial < self.size-1):
              no = [xinitial, yinitial +1]
              if (self.checkNodeValid(xinitial, yinitial+1)):
-                 print("addAdj2")
                  self.nosAVisitar.append(no)
     
 
@@ -744,18 +728,13 @@ class Tak:
 
                
      def greedy(self, xinitial, yinitial, h):
-         print(self.nosVisitados)
          self.nosVisitados.append([xinitial,yinitial])
           #adds any new priorities that might arive         
          
          if (self.verifyFound(h, xinitial, yinitial)):
-             print("i need here 2")
              return True
-         print("something Happened")
          h = self.evolveHeuristic(xinitial, yinitial, h)
-         print("greedy2")
          self.addAdjNodes(xinitial, yinitial)
-         print(self.nosAVisitar)
          while(len(self.nosAVisitar) >0):
                  pick = self.heuristicPick(self.nosAVisitar, h)
                  coord = self.nosAVisitar.pop(pick)
