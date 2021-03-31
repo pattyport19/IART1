@@ -10,33 +10,46 @@ import tak
 
 
 def main():
+    """
     game = tak.Tak(3)
-    game.place(0,0)
-    game.place(1,1)
-    game.place(0,1)
-    game.placeWall(1,2)
+    game.place(2,1)
+    game.place(2,0)
+    game.placeCap(2,0)
+
     #game.placeWall(2,2)
-    game.nextPosMoves(game.board, game.current)    
     game.display()
-    
-    game.genNcasas(1,1, game.board)
+    game.nextPosMoves(game.board, game.current)    
+
     
     """
     game= tak.Tak(3)
 
-    
     temp= True
     while temp :
+        
         game.play()
+            
         game.display()
         if (game.checkFinished()):
             print("Player Isla Won!")
             return True
+
+        game.switch()
+        game.ai()
+        game.display()
+        if (game.checkFinished()):
+            print("Player AI Won!")
+            return True
+        game.switch()
+        
+
+        
+    
         yes= input("quer jogar mais ?y(yes) n(no)")
         if (yes == "n"):
             temp= False
 
-        game.switch()
-  """          
+
+         
     
 main()

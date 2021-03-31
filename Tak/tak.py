@@ -8,6 +8,9 @@ import Player
 import SinglePlay
 import HeuristicaFim
 import copy
+import random
+
+deb = False
 
 
      
@@ -581,9 +584,9 @@ class Tak:
          if (self.lastPlay.getDirection() == None): #caso em que o jogador fez place
              x = self.lastPlay.getX()
              y = self.lastPlay.getY()
-             return self.verifyFromHere(y,x)  #mudei aqui !!!!!!!
+             return self.verifyFromHere(y,x)  
          else: ##caso da jogada ser move
-             return self.verifyFromRange()
+             return self.verifyFromRange()    ##to do 
          
             
      
@@ -697,6 +700,7 @@ class Tak:
          return True  #True 
         
      def addAdjNodes(self, xinitial ,yinitial ):
+        print(xinitial)
         if (xinitial > 0):
              no = [xinitial-1, yinitial]
              if (self.checkNodeValid(xinitial-1, yinitial)):
@@ -735,6 +739,7 @@ class Tak:
          if (self.verifyFound(h, xinitial, yinitial)):
              return True
          h = self.evolveHeuristic(xinitial, yinitial, h)
+         print(xinitial)
          self.addAdjNodes(xinitial, yinitial)
          while(len(self.nosAVisitar) >0):
                  pick = self.heuristicPick(self.nosAVisitar, h)
@@ -752,6 +757,7 @@ class Tak:
          
      def verifyFromHere(self,xinitial, yinitial):
          h = HeuristicaFim.Heuristica()
+         print(xinitial)
          
          
          if (xinitial == 0 ):
@@ -819,7 +825,7 @@ class Tak:
          for i in range (self.size): #row = y
              for j in range (self.size): #column =x
                  tempBoard = copy.deepcopy(board)
-                 if (len(tempBoard[i][j]) ==0): #if empty
+                 if (len(tempBoard[i][j]) ==0): #if empty, place
                      tempBoard[i][j].append("F"+curPlayer.color)
                      jogadas.append(tempBoard)
                      tempBoard= copy.deepcopy(board)
@@ -830,22 +836,105 @@ class Tak:
                          tempBoard[i][j].append("C"+curPlayer.color)
                          jogadas.append(tempBoard)
                          tempBoard= copy.deepcopy(board)
-                 elif(board[i][j][-1][-1] == curPlayer.color):
+                 elif(board[i][j][-1][-1] == curPlayer.color):  #move
+                     #ncasas order T B L R
+                     ncasas = self.genNcasas(i,j,board)
+                     if deb:
+                         print(ncasas)
                      npecas = len(board[i][j])
                      if (npecas> self.size):
                          npecas = self.size
-                     #ncasas order L R T B
-                     ncasas = self.genNcasas(i,j,board)
-                     print(ncasas)
+                     pecas =[]
                      
+                     for k in range(npecas):
+                         pecas.append(tempBoard[i][j].pop())  #ponho as pecas ao contrario
+                     
+                     for d in range(len(ncasas)): #for each direction
+                         if (ncasas[d] > 0):
+                             self.perm(ncasas[d], copy.deepcopy(pecas), True,i,j, d, copy.deepcopy(tempBoard), jogadas)
+                         if (deb):
+                            print("next")
+                     
+             
          for i in range(len(jogadas)):
             print(jogadas[i][0])
             print(jogadas[i][1])
             print(jogadas[i][2]) 
             print("next")
+         if (deb):
+             print(len(jogadas))
+         return jogadas
+
                                
+     def perm(self,casas, pecas, isFirst,x, y, d, copyBoard, jogadas):
+         if (deb):
+             print(x,y)
+         if (casas == 0): ##check if 0 or 1
+             for i in range (len (pecas)):
+                 copyBoard[x][y].append(pecas.pop())
+             jogadas.append(copyBoard)
+             if (deb):
+                 self.display2(copyBoard)
+             return
+         if (len(pecas)==0):
+             jogadas.append(copyBoard)
+             if (deb):
+                 self.display2(copyBoard)
+             return
+         
+        
+         n = -2
+         v = -2
+         if (d ==2 ):  #left
+             n = -1
+             v = 0
+         if (d ==3 ):  #right
+             n = 1
+             v = 0
+         if (d == 0):  #top
+             n =0 
+             v = -1 
+         if (d == 1):  #bottom
+             n = 0
+             v= 1
+        #caso em que a cap stone esmaga
+         if (len(copyBoard[x+v][y+n])>0):
+            if (copyBoard[x+v][y+n][-1][0] == "W"):
+                color = copyBoard[x+v][y+n][-1][-1]
+                copyBoard[x+v][y+n][-1]= "F"+ color  # is this a thing?
+                for r in range (len (pecas)-1):
+                  copyBoard[x][y].append(pecas.pop())
+                copyBoard[x+v][y+n].append(pecas.pop())
+                jogadas.append(copyBoard)
+                if (deb):
+                     self.display2(copyBoard)
+                     return
+                
 
-
+             
+         if ( n == -2 or v == -2):
+             print("something is fishy ")
+             return
+         
+         if not isFirst:
+            i = 1
+            j = len(pecas)+1
+         else:
+            i =0
+            j = len(pecas)
+          
+         
+         #print(copyBoard)   
+         for k in range(i, j):  #k = 1
+             
+             if (k >0):
+                 copyBoard[x][y].append(pecas.pop())  #ordena as pecas e poe na casa
+             
+             self.perm(casas-1, copy.deepcopy(pecas), False,x+v, y+n, d, copy.deepcopy(copyBoard), jogadas)
+             
+    
+        
+        
      def genNcasas(self,x,y,board):
         #x-
         ncasas=[]
@@ -866,9 +955,9 @@ class Tak:
             else:
                 temp+=1                
         ncasas.append(temp)       
-        temp =0   
-        #x+
+        temp =0
         
+        #x+
         for i in range(x+1,self.size):
             if (len(board[i][y])>0):
                 
@@ -924,20 +1013,24 @@ class Tak:
                 temp+=1
         ncasas.append(temp)
 
-        return ncasas      
+        return ncasas  
+    
+     def display2(self, board):
+        for i in range(len(board)):
+            print(board[i])
+        print("next")
+        
+     def ai (self):
+         jogadas = self.nextPosMoves(self.board, self.current)
+         self.board = jogadas[random.randint(1,len(jogadas)-1)] 
+        
+
+
+
+
+
+            
+            
 
          
      
-
-         
-    
-    
-
-        
-            
-         
-                    
-        
-        
-        
-    
