@@ -9,6 +9,7 @@ import SinglePlay
 import HeuristicaFim
 import copy
 import random
+import Jogada
 
 deb = True
 
@@ -612,10 +613,10 @@ class Tak:
              v= 1
          
          for i in range(self.lastPlay.distance+1):
-             print(x+(v*i),y+(n*i),"x",x,"y",y,"n",n,"v",v, "i", i)
-             if (len(self.board[x+(v*i)][y+(n*i)])>0):
-                 if (self.checkNodeValid(x+(v*i), y+(n*i))):
-                     if (self.verifyFromHere(x+(v*i), y+(n*i))):
+             print(x+(n*i),y+(v*i),"x",x,"y",y,"n",n,"v",v, "i", i)
+             if (len(self.board[x+(n*i)][y+(v*i)])>0):
+                 if (self.checkNodeValid(x+(n*i), y+(v*i))):
+                     if (self.verifyFromHere(x+(n*i), y+(v*i))):
                          return True
          return False
              
@@ -630,6 +631,8 @@ class Tak:
          x = self.lastPlay.getX()
          y = self.lastPlay.getY()
          if (self.lastPlay.getDirection() == None): #caso em que o jogador fez place
+             if (deb):
+                 print("pathHere")
              return self.verifyFromHere(y,x)  
          else: ##caso da jogada ser move
              return self.verifyFromRange(y,x)    ##to do 
@@ -741,7 +744,7 @@ class Tak:
             return False
          if (self.board[x][y][-1][-1] != self.current.color):  
              return False  #False
-         if (self.board[x][y][-1][1] == "W"):  ##check if this is working
+         if (self.board[x][y][-1][0] == "W"):  ##check if this is working
              return False  #False
          return True  #True 
         
@@ -781,7 +784,7 @@ class Tak:
                
      def greedy(self, xinitial, yinitial, h):
          self.nosVisitados.append([xinitial,yinitial])
-          #adds any new priorities that might arive         
+                   
          
          if (self.verifyFound(h, xinitial, yinitial)):
              return True
@@ -870,22 +873,30 @@ class Tak:
     #this code is for the functions of MinMax
      def nextPosMoves (self, board, curPlayer):
          jogadas =[]
+         play = SinglePlay.SinglePlay()
          for i in range (self.size): #row = y
              for j in range (self.size): #column =x
+                 play = SinglePlay.SinglePlay()
                  tempBoard = copy.deepcopy(board)
                  if (len(tempBoard[i][j]) ==0): #if empty, place
+                     
+                     play.place(j,i) #descobrir se e nessa forma mesmo
                      tempBoard[i][j].append("F"+curPlayer.color)
-                     jogadas.append(tempBoard)
+                     jog = Jogada.Jogada(play, tempBoard, False)
+                     jogadas.append(jog)
                      tempBoard= copy.deepcopy(board)
-                     tempBoard[i][j].append("W"+curPlayer.color)
-                     jogadas.append(tempBoard)
-                     tempBoard= copy.deepcopy(board)
+                     #tempBoard[i][j].append("W"+curPlayer.color)
+                     #jog = Jogada.Jogada(play, tempBoard, False)
+                     #jogadas.append(jog)
+                     #tempBoard= copy.deepcopy(board)
                      if not curPlayer.getCapStoneUsed():
                          tempBoard[i][j].append("C"+curPlayer.color)
-                         jogadas.append(tempBoard)
+                         jog = Jogada.Jogada(play, tempBoard, True)
+                         jogadas.append(jog)
                          tempBoard= copy.deepcopy(board)
                  elif(board[i][j][-1][-1] == curPlayer.color):  #move
                      #ncasas order T B L R
+                     """
                      ncasas = self.genNcasas(i,j,board)
                      if deb:
                          print(ncasas)
@@ -902,12 +913,13 @@ class Tak:
                              self.perm(ncasas[d], copy.deepcopy(pecas), True,i,j, d, copy.deepcopy(tempBoard), jogadas)
                          if (deb):
                             print("next")
-                     
+                     """
+                     print("")
              
          for i in range(len(jogadas)):
-            print(jogadas[i][0])
-            print(jogadas[i][1])
-            print(jogadas[i][2]) 
+            print(jogadas[i].board[0])
+            print(jogadas[i].board[1])
+            print(jogadas[i].board[2]) 
             print("next")
          if (deb):
              print(len(jogadas))
@@ -1070,7 +1082,19 @@ class Tak:
         
      def ai (self):
          jogadas = self.nextPosMoves(self.board, self.current)
-         self.board = jogadas[random.randint(1,len(jogadas)-1)] 
+         jogada = jogadas[random.randint(1,len(jogadas)-1)] 
+         if (jogada.singlePlay.direction == None):
+             if (jogada.usedCap):
+                 self.current.addCapStone()
+             else:
+                 self.current.addPiece()
+         
+         self.lastPlay = jogada.singlePlay   
+         print("LX",self.lastPlay.getX(),"LY", self.lastPlay.getY())
+         self.board = jogada.board
+         
+         
+         
         
 
 
