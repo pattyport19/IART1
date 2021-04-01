@@ -33,8 +33,9 @@ def main():
         if (game.checkFinished()):
             print("Player Isla Won!")
             return True
-
+        
         game.switch()
+
         game.ai()
         game.display()
         if (game.checkFinished()):

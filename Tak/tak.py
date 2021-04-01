@@ -10,7 +10,7 @@ import HeuristicaFim
 import copy
 import random
 
-deb = False
+deb = True
 
 
      
@@ -108,8 +108,9 @@ class Tak:
                                     self.board[yinitial][x].append(pieces.pop())
                                  x-=1
                                  if (yes == maxi):
-                                    self.lastPlay.move(yinitial,xinitial, direction,counter)
-                                    return True
+                                     if (len(pieces) ==0):  
+                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        return True
                                  counter+=1
                          else:  #aqui o neighboard ja morreu 
                              if (pieces[0]== "CB" or pieces[0] == "CW"):
@@ -201,8 +202,9 @@ class Tak:
                                     self.board[y][xinitial].append(pieces.pop())
                                  y+=1
                                  if (yes == maxi):
-                                    self.lastPlay.move(yinitial,xinitial, direction,counter)
-                                    return True
+                                     if (len(pieces) ==0):  
+                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        return True
                                  counter+=1
                          else:
                              if (pieces[0]== "CB" or pieces[0] == "CW"):
@@ -267,10 +269,13 @@ class Tak:
                          if(self.verifyNeighboard(y,x+1)):
                              if (len(pieces) ==1):
                                  if (xinitial == x):
+                                     print("how?")
                                      self.board[yinitial][xinitial+1].append(pieces.pop())
                                      self.lastPlay.move(yinitial,xinitial, direction, 1)
                                      return True
                                  else:
+                                     if (deb):
+                                         print("estranhamente ta tudo fodido")
                                      self.board[yinitial][x].append(pieces.pop())
                                      self.lastPlay.move(yinitial,xinitial, direction, counter)
                                      return True
@@ -288,12 +293,17 @@ class Tak:
                                      yes = int(input('Quantas pecas deseja deixar?: '))
                                      if (yes >=mini and yes <= maxi):
                                          break
+                                 if (deb):
+                                     print(yes)
                                  for j in range(yes):
                                     self.board[yinitial][x].append(pieces.pop())
                                  x+=1
                                  if (yes == maxi):
-                                    self.lastPlay.move(yinitial,xinitial, direction,counter)
-                                    return True
+                                     if (len(pieces) ==0):                                         
+                                        if (deb):
+                                             print("wtf")
+                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        return True
                                  counter+=1
                          else:
                              if (pieces[0]== "CB" or pieces[0] == "CW"):
@@ -387,8 +397,9 @@ class Tak:
                                     self.board[y][xinitial].append(pieces.pop())
                                  y-=1
                                  if (yes == maxi):
-                                    self.lastPlay.move(yinitial,xinitial, direction,counter)
-                                    return True
+                                     if (len(pieces) ==0):  
+                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        return True
                                  counter+=1
                          else:
                              if (pieces[0]== "CB" or pieces[0] == "CW"):
@@ -466,6 +477,10 @@ class Tak:
          
          
      def verifyIfCap(self,ypos, xpos):
+        if (xpos >= self.size or ypos >= self.size):
+            return False
+        if (xpos <0 or ypos <0):
+            return False
         if (self.board[ypos][xpos][-1]== "WB" or self.board[ypos][xpos][-1]== "WW"):
             return True
         else:
@@ -577,16 +592,47 @@ class Tak:
          
          
          
+     def verifyFromRange(self, x, y):
+         print("preciso de ir a casa de banho")
+         d = self.lastPlay.direction
+         
+         n =-2
+         v = -2
+         if (d =="a" ):  #left
+             n = -1
+             v = 0
+         if (d =="d"):  #right
+             n = 1
+             v = 0
+         if (d == "w"):  #top
+             n =0 
+             v = -1 
+         if (d == "s"):  #bottom
+             n = 0
+             v= 1
+         
+         for i in range(self.lastPlay.distance+1):
+             print(x+(v*i),y+(n*i),"x",x,"y",y,"n",n,"v",v, "i", i)
+             if (len(self.board[x+(v*i)][y+(n*i)])>0):
+                 if (self.checkNodeValid(x+(v*i), y+(n*i))):
+                     if (self.verifyFromHere(x+(v*i), y+(n*i))):
+                         return True
+         return False
+             
+             
+             
+         
+         
          
      def path(self): ##funcao baseada em greedy Algorithm
          self.nosAVisitar.clear()
          self.nosVisitados.clear()
+         x = self.lastPlay.getX()
+         y = self.lastPlay.getY()
          if (self.lastPlay.getDirection() == None): #caso em que o jogador fez place
-             x = self.lastPlay.getX()
-             y = self.lastPlay.getY()
              return self.verifyFromHere(y,x)  
          else: ##caso da jogada ser move
-             return self.verifyFromRange()    ##to do 
+             return self.verifyFromRange(y,x)    ##to do 
          
             
      
@@ -699,6 +745,7 @@ class Tak:
              return False  #False
          return True  #True 
         
+        
      def addAdjNodes(self, xinitial ,yinitial ):
         print(xinitial)
         if (xinitial > 0):
@@ -757,7 +804,8 @@ class Tak:
          
      def verifyFromHere(self,xinitial, yinitial):
          h = HeuristicaFim.Heuristica()
-         print(xinitial)
+         if deb:
+             print(xinitial)
          
          
          if (xinitial == 0 ):
