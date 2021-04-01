@@ -23,6 +23,12 @@ def main():
     
     """
     game= tak.Tak(3)
+    game.switch()
+    game.place(1,1)
+    game.placeCap (2,2)
+    game.place(2,0)
+    game.place(1,0)
+    game.switch()
 
     temp= True
     while temp :

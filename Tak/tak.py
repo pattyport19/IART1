@@ -869,34 +869,44 @@ class Tak:
             self.current= self.Player2
         else:
             self.current= self.Player1
-            
+      
+     def dirConvertor(self,d):
+         if (d == 0):
+             return "w"
+         if (d == 1):
+             return "s"
+         if (d == 2):
+             return "a"
+         if (d == 3):
+             return "d"
     #this code is for the functions of MinMax
      def nextPosMoves (self, board, curPlayer):
          jogadas =[]
          play = SinglePlay.SinglePlay()
          for i in range (self.size): #row = y
              for j in range (self.size): #column =x
-                 play = SinglePlay.SinglePlay()
+                 
                  tempBoard = copy.deepcopy(board)
                  if (len(tempBoard[i][j]) ==0): #if empty, place
                      
+                     play = SinglePlay.SinglePlay()
                      play.place(j,i) #descobrir se e nessa forma mesmo
                      tempBoard[i][j].append("F"+curPlayer.color)
                      jog = Jogada.Jogada(play, tempBoard, False)
                      jogadas.append(jog)
                      tempBoard= copy.deepcopy(board)
-                     #tempBoard[i][j].append("W"+curPlayer.color)
-                     #jog = Jogada.Jogada(play, tempBoard, False)
-                     #jogadas.append(jog)
-                     #tempBoard= copy.deepcopy(board)
+                     tempBoard[i][j].append("W"+curPlayer.color)
+                     jog = Jogada.Jogada(play, tempBoard, False)
+                     jogadas.append(jog)
+                     tempBoard= copy.deepcopy(board)
                      if not curPlayer.getCapStoneUsed():
                          tempBoard[i][j].append("C"+curPlayer.color)
                          jog = Jogada.Jogada(play, tempBoard, True)
                          jogadas.append(jog)
                          tempBoard= copy.deepcopy(board)
+                         
                  elif(board[i][j][-1][-1] == curPlayer.color):  #move
                      #ncasas order T B L R
-                     """
                      ncasas = self.genNcasas(i,j,board)
                      if deb:
                          print(ncasas)
@@ -909,12 +919,15 @@ class Tak:
                          pecas.append(tempBoard[i][j].pop())  #ponho as pecas ao contrario
                      
                      for d in range(len(ncasas)): #for each direction
+                         play = SinglePlay.SinglePlay()
+                         play.initials(j,i)
+                         play.setDirection(self.dirConvertor(d))  #do over
                          if (ncasas[d] > 0):
-                             self.perm(ncasas[d], copy.deepcopy(pecas), True,i,j, d, copy.deepcopy(tempBoard), jogadas)
+                             jog = Jogada.Jogada(play, copy.deepcopy(tempBoard), True)
+                             self.perm(ncasas[d], copy.deepcopy(pecas), True,i,j, d, copy.deepcopy(jog), jogadas, 0)
                          if (deb):
                             print("next")
-                     """
-                     print("")
+
              
          for i in range(len(jogadas)):
             print(jogadas[i].board[0])
@@ -926,21 +939,23 @@ class Tak:
          return jogadas
 
                                
-     def perm(self,casas, pecas, isFirst,x, y, d, copyBoard, jogadas):
+     def perm(self,casas, pecas, isFirst,x, y, d, jogada, jogadas, depth):
          if (deb):
              print(x,y)
          if (casas == 0): ##check if 0 or 1
              for i in range (len (pecas)):
-                 copyBoard[x][y].append(pecas.pop())
-             jogadas.append(copyBoard)
+                 jogada.board[x][y].append(pecas.pop())
+             jogada.singlePlay.setDistance(depth)
+             jogadas.append(jogada)
              if (deb):
-                 self.display2(copyBoard)
-             return
+                 self.display2(jogada.board)
+             return depth
          if (len(pecas)==0):
-             jogadas.append(copyBoard)
+             jogada.singlePlay.setDistance(depth-1)
+             jogadas.append(jogada)
              if (deb):
-                 self.display2(copyBoard)
-             return
+                 self.display2(jogada.board)
+             return depth-1   #check?
          
         
          n = -2
@@ -958,17 +973,18 @@ class Tak:
              n = 0
              v= 1
         #caso em que a cap stone esmaga
-         if (len(copyBoard[x+v][y+n])>0):
-            if (copyBoard[x+v][y+n][-1][0] == "W"):
-                color = copyBoard[x+v][y+n][-1][-1]
-                copyBoard[x+v][y+n][-1]= "F"+ color  # is this a thing?
+         if (len(jogada.board[x+v][y+n])>0):
+            if (jogada.board[x+v][y+n][-1][0] == "W"):
+                color = jogada.board[x+v][y+n][-1][-1]
+                jogada.board[x+v][y+n][-1]= "F"+ color  
                 for r in range (len (pecas)-1):
-                  copyBoard[x][y].append(pecas.pop())
-                copyBoard[x+v][y+n].append(pecas.pop())
-                jogadas.append(copyBoard)
+                  jogada.board[x][y].append(pecas.pop())
+                jogada.board[x+v][y+n].append(pecas.pop())
+                jogada.singlePlay.setDistance(depth+1)
+                jogadas.append(jogada)
                 if (deb):
-                     self.display2(copyBoard)
-                     return
+                     self.display2(jogada.board)
+                return depth+1 #who are u?
                 
 
              
@@ -988,9 +1004,9 @@ class Tak:
          for k in range(i, j):  #k = 1
              
              if (k >0):
-                 copyBoard[x][y].append(pecas.pop())  #ordena as pecas e poe na casa
+                 jogada.board[x][y].append(pecas.pop())  #ordena as pecas e poe na casa
              
-             self.perm(casas-1, copy.deepcopy(pecas), False,x+v, y+n, d, copy.deepcopy(copyBoard), jogadas)
+             self.perm(casas-1, copy.deepcopy(pecas), False,x+v, y+n, d, copy.deepcopy(jogada), jogadas, depth+1)
              
     
         
@@ -1074,11 +1090,13 @@ class Tak:
         ncasas.append(temp)
 
         return ncasas  
+   
     
      def display2(self, board):
         for i in range(len(board)):
             print(board[i])
         print("next")
+     
         
      def ai (self):
          jogadas = self.nextPosMoves(self.board, self.current)

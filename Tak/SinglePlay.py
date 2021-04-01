@@ -25,6 +25,16 @@ class SinglePlay:
    
    def getDistance(self):
        return self.distance
+   
+   def initials(self,x,y):
+       self.x =x
+       self.y = y
+   
+   def setDirection(self, direction):
+       self.direction = direction
+       
+   def setDistance (self, distance):
+       self.distance = distance
        
        
    def place(self, x, y):
