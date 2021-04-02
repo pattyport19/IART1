@@ -13,6 +13,7 @@ class SinglePlay:
         self.y = None
         self.direction = None
         self.distance = None
+        self.player = None
         
    def getDirection(self):
        return self.direction
@@ -26,6 +27,9 @@ class SinglePlay:
    def getDistance(self):
        return self.distance
    
+   def getPlayer(self):
+       return self.player
+   
    def initials(self,x,y):
        self.x =x
        self.y = y
@@ -35,13 +39,17 @@ class SinglePlay:
        
    def setDistance (self, distance):
        self.distance = distance
+   
+   def setPlayer(self, player):
+       self.player= player
        
        
-   def place(self, x, y):
+   def place(self, x, y, player):
       self.x = x
       self.y = y
       self.direction = None
       self.distance = None
+      self.player = player
       
       
    def move(self, x, y , direction, distance):

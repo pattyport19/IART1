@@ -46,7 +46,7 @@ def main():
         game.play()
             
         game.display()
-        if (game.checkFinished()):
+        if (game.checkFinished(game.current, game.board)):
             print("Player Isla Won!")
             return True
         
@@ -54,7 +54,7 @@ def main():
 
         game.aiBestMove()
         game.display()
-        if (game.checkFinished()):
+        if (game.checkFinished(game.current, game.board)):
             print("Player AI Won!")
             return True
         game.switch()

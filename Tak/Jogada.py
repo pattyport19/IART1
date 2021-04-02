@@ -10,3 +10,7 @@ class Jogada:
         self.singlePlay= SinglePlay
         self.board= board
         self.usedCap = usedCap
+        
+    def getSinglePlay(self):
+        return self.singlePlay
+        

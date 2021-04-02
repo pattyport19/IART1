@@ -459,17 +459,17 @@ class Tak:
         
             if (w== "w"):
                 if (self.placeWall(x,y)==0):
-                    self.lastPlay.place(x,y)
+                    self.lastPlay.place(x,y,self.current)
                     return True
                     
             elif (w== "c"):
                 if (self.placeCap(x,y)==0):
-                    self.lastPlay.place(x,y)
+                    self.lastPlay.place(x,y, self.current)
                     return True
                     
             else:
                 if(self.place(x,y)==0):
-                    self.lastPlay.place(x,y)
+                    self.lastPlay.place(x,y, self.current)
                     return True
             return False
              
@@ -543,19 +543,19 @@ class Tak:
 
     
      
-     def checkFinished(self):  
-         if (self.current.getPiecesUsed()<self.size):
+     def checkFinished(self, player, board):  
+         if (player.getPiecesUsed()<self.size):
              return False
          
-         if (self.path()):
-             self.countPoints()
+         if (self.path(board)):
+             self.countPoints(board)
              return True
          
          if (self.Player1.getPiecesUsed()>22 or self.Player2.getPiecesUsed()>22 ):
-             self.countPoints()
+             self.countPoints(board)
              return True
          if not self.checkForEmpty():
-             self.countPoints()
+             self.countPoints(board)
              return True
          
          return False
@@ -564,17 +564,17 @@ class Tak:
              
              
          
-     def countPoints(self):
+     def countPoints(self, board):
          self.Player1.setPoint(0)
          self.Player2.setPoint(0)
          for i in range (self.size):
              for j in range(self.size):
-                 if (len(self.board[i][j])==0):
+                 if (len(board[i][j])==0):
                      continue
                  else:
-                     if (self.board[i][j][-1][-1] == "W" and self.board[i][j][-1][0] != "W"):
+                     if (board[i][j][-1][-1] == "W" and board[i][j][-1][0] != "W"):
                          self.Player2.addPoint()
-                     else:
+                     elif(board[i][j][-1][-1] == "B" and board[i][j][-1][0] != "W"):
                          self.Player1.addPoint()
                          
                      
@@ -593,7 +593,7 @@ class Tak:
          
          
          
-     def verifyFromRange(self, x, y):
+     def verifyFromRange(self, x, y, board):
          print("preciso de ir a casa de banho")
          d = self.lastPlay.direction
          
@@ -616,7 +616,7 @@ class Tak:
              print(x+(v*i),y+(n*i),"y",x,"x",y,"n",n,"v",v, "i", i)
              if (len(self.board[y+(n*i)][x+(v*i)])>0):
                  if (self.checkNodeValid( y+(n*i),x+(v*i))):
-                     if (self.verifyFromHere(y+(n*i), x+(v*i))):
+                     if (self.verifyFromHere(y+(n*i), x+(v*i), board)):
                          return True
          return False
              
@@ -625,7 +625,7 @@ class Tak:
          
          
          
-     def path(self): ##funcao baseada em greedy Algorithm
+     def path(self, board): ##funcao baseada em greedy Algorithm
          self.nosAVisitar.clear()
          self.nosVisitados.clear()
          x = self.lastPlay.getX()
@@ -633,9 +633,9 @@ class Tak:
          if (self.lastPlay.getDirection() == None): #caso em que o jogador fez place
              if (deb):
                  print("pathHere")
-             return self.verifyFromHere(y,x)  
+             return self.verifyFromHere(y,x, board)  
          else: ##caso da jogada ser move
-             return self.verifyFromRange(y,x)    ##to do 
+             return self.verifyFromRange(y,x, board)    ##to do 
          
             
      
@@ -805,9 +805,15 @@ class Tak:
          
          
          
-     def verifyFromHere(self,xinitial, yinitial):
-         if (self.board[xinitial][yinitial][-1][0] == "W"):
+     def verifyFromHere(self,xinitial, yinitial, board):
+         self.display2(board)
+         print(xinitial, yinitial)
+         
+         if (len(board[xinitial][yinitial])<=0):
              return False
+         if (board[xinitial][yinitial][-1][0] == "W"):
+             return False
+         
          h = HeuristicaFim.Heuristica()
          if deb:
              print(xinitial)
@@ -881,6 +887,7 @@ class Tak:
              return "a"
          if (d == 3):
              return "d"
+         
     #this code is for the functions of MinMax
      def nextPosMoves (self, board, curPlayer):
          jogadas =[]
@@ -892,7 +899,7 @@ class Tak:
                  if (len(tempBoard[i][j]) ==0): #if empty, place
                      
                      play = SinglePlay.SinglePlay()
-                     play.place(j,i) #descobrir se e nessa forma mesmo
+                     play.place(j,i, self.current) #descobrir se e nessa forma mesmo
                      tempBoard[i][j].append("F"+curPlayer.color)
                      jog = Jogada.Jogada(play, tempBoard, False)
                      jogadas.append(jog)
@@ -922,6 +929,7 @@ class Tak:
                      
                      for d in range(len(ncasas)): #for each direction
                          play = SinglePlay.SinglePlay()
+                         play.setPlayer(self.current)
                          play.initials(j,i)
                          play.setDirection(self.dirConvertor(d))  #do over
                          if (ncasas[d] > 0):
@@ -1128,19 +1136,41 @@ class Tak:
     
      def bestMove(self, jogadas):
          bestScore = -1000000000000000000
-         lastOficial = copy.deepcopy(self.lastPlay)
          for jogada in jogadas:
-             self.lastPlay(jogada.singlePlay)
+             self.lastPlay= jogada.singlePlay
              score = self.minimax(jogada, 0, False)
              if (score > bestScore):
                  bestScore = score
                  jog = jogada
-         self.lastPlay(lastOficial)
          return jog
      
      def minimax (self, jogada, depth, isMaximizing):
-         if (self.checkFinished()):
-             return 1000 #fazer isto por com maior valor a jogada com menos depth
+         if (self.checkFinished(jogada.singlePlay.getPlayer(), jogada.board)):
+             if not isMaximizing:  #porque esta a comparar o nivel anterior
+                 return 1000 #fazer isto por com maior valor a jogada com menos depth
+             else:
+                 return -1000
+        
+         if (depth ==1):
+             self.countPoints(jogada.board)
+             return jogada.singlePlay.getPlayer().getPoints()
+             
+         #outro termo de saida tem que ser o max depth
+         jogadas = self.nextPosMoves( jogada.board, jogada.singlePlay.getPlayer())
+         if (isMaximizing):
+             bestScore = -1000000000000000000
+             for jogada in jogadas:
+                 self.lastPlay=jogada.singlePlay
+                 score = self.minimax(jogada, depth+1, False)
+                 bestScore = max(score, bestScore)
+             return bestScore
+         else:  #isMinimizing
+             bestScore = 1000000000000000000
+             for jogada in jogadas:
+                 self.lastPlay=jogada.singlePlay
+                 score = self.minimax(jogada, depth+1, True)
+                 bestScore = min(score, bestScore)
+             return bestScore
          
          
          return 1
