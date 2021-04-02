@@ -613,10 +613,10 @@ class Tak:
              v= 1
          
          for i in range(self.lastPlay.distance+1):
-             print(x+(n*i),y+(v*i),"x",x,"y",y,"n",n,"v",v, "i", i)
-             if (len(self.board[x+(n*i)][y+(v*i)])>0):
-                 if (self.checkNodeValid(x+(n*i), y+(v*i))):
-                     if (self.verifyFromHere(x+(n*i), y+(v*i))):
+             print(x+(v*i),y+(n*i),"y",x,"x",y,"n",n,"v",v, "i", i)
+             if (len(self.board[y+(n*i)][x+(v*i)])>0):
+                 if (self.checkNodeValid( y+(n*i),x+(v*i))):
+                     if (self.verifyFromHere(y+(n*i), x+(v*i))):
                          return True
          return False
              
@@ -806,6 +806,8 @@ class Tak:
          
          
      def verifyFromHere(self,xinitial, yinitial):
+         if (self.board[xinitial][yinitial][-1][0] == "W"):
+             return False
          h = HeuristicaFim.Heuristica()
          if deb:
              print(xinitial)
@@ -1098,7 +1100,7 @@ class Tak:
         print("next")
      
         
-     def ai (self):
+     def aiRandom (self):
          jogadas = self.nextPosMoves(self.board, self.current)
          jogada = jogadas[random.randint(1,len(jogadas)-1)] 
          if (jogada.singlePlay.direction == None):
@@ -1111,16 +1113,45 @@ class Tak:
          print("LX",self.lastPlay.getX(),"LY", self.lastPlay.getY())
          self.board = jogada.board
          
+     def aiBestMove (self):
+         jogadas = self.nextPosMoves(self.board, self.current)
+         jogada = self.bestMove(jogadas)
+         if (jogada.singlePlay.direction == None):
+             if (jogada.usedCap):
+                 self.current.addCapStone()
+             else:
+                 self.current.addPiece()
+         
+         self.lastPlay = jogada.singlePlay   
+         print("LX",self.lastPlay.getX(),"LY", self.lastPlay.getY())
+         self.board = jogada.board
+    
+     def bestMove(self, jogadas):
+         bestScore = -1000000000000000000
+         lastOficial = copy.deepcopy(self.lastPlay)
+         for jogada in jogadas:
+             self.lastPlay(jogada.singlePlay)
+             score = self.minimax(jogada, 0, False)
+             if (score > bestScore):
+                 bestScore = score
+                 jog = jogada
+         self.lastPlay(lastOficial)
+         return jog
+     
+     def minimax (self, jogada, depth, isMaximizing):
+         if (self.checkFinished()):
+             return 1000 #fazer isto por com maior valor a jogada com menos depth
          
          
+         return 1
+            
+             
+             
         
-
-
-
-
-
-            
-            
-
+        
+    
+    
+         
+         
          
      

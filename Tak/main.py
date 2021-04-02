@@ -21,13 +21,23 @@ def main():
     game.nextPosMoves(game.board, game.current)    
 
     
-    """
+    
+    v2
+    
     game= tak.Tak(3)
     game.switch()
     game.place(1,1)
     game.placeCap (2,2)
     game.place(2,0)
     game.place(1,0)
+    game.switch()
+    """
+    game= tak.Tak(3)
+    game.switch()
+    game.place(1,1)
+    game.placeCap (2,2)
+    game.place(2,1)
+    game.place(1,2)
     game.switch()
 
     temp= True
@@ -42,7 +52,7 @@ def main():
         
         game.switch()
 
-        game.ai()
+        game.aiBestMove()
         game.display()
         if (game.checkFinished()):
             print("Player AI Won!")
