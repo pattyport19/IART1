@@ -34,8 +34,8 @@ def main():
     """
     game= tak.Tak(3)
     game.switch()
-    game.place(1,1)
-    game.placeCap (2,2)
+   # game.place(1,1)
+    game.placeWall (2,2)
     game.place(2,1)
     game.place(1,2)
     game.switch()

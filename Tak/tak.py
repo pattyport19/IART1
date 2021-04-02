@@ -1135,23 +1135,30 @@ class Tak:
          self.board = jogada.board
     
      def bestMove(self, jogadas):
+         alpha = -1000000000
+         beta = 1000000000
          bestScore = -1000000000000000000
          for jogada in jogadas:
              self.lastPlay= jogada.singlePlay
-             score = self.minimax(jogada, 0, False)
+             score = self.minimax(jogada, 0, copy.deepcopy(alpha),copy.deepcopy(beta),  False)
              if (score > bestScore):
                  bestScore = score
                  jog = jogada
+             alpha = max (alpha,score)
+             if (beta <= alpha):
+                     break
+             
          return jog
      
-     def minimax (self, jogada, depth, isMaximizing):
+     def minimax (self, jogada, depth,alpha, beta, isMaximizing):
+         
          if (self.checkFinished(jogada.singlePlay.getPlayer(), jogada.board)):
              if not isMaximizing:  #porque esta a comparar o nivel anterior
                  return 1000 #fazer isto por com maior valor a jogada com menos depth
              else:
                  return -1000
         
-         if (depth ==1):
+         if (depth ==3):
              self.countPoints(jogada.board)
              return jogada.singlePlay.getPlayer().getPoints()
              
@@ -1161,15 +1168,21 @@ class Tak:
              bestScore = -1000000000000000000
              for jogada in jogadas:
                  self.lastPlay=jogada.singlePlay
-                 score = self.minimax(jogada, depth+1, False)
+                 score = self.minimax(jogada, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), False)
                  bestScore = max(score, bestScore)
+                 alpha = max (alpha, score)
+                 if (beta <= alpha):
+                     break
              return bestScore
          else:  #isMinimizing
              bestScore = 1000000000000000000
              for jogada in jogadas:
                  self.lastPlay=jogada.singlePlay
-                 score = self.minimax(jogada, depth+1, True)
+                 score = self.minimax(jogada, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), True)
                  bestScore = min(score, bestScore)
+                 beta = min (beta, score)
+                 if (beta <= alpha):
+                     break
              return bestScore
          
          
