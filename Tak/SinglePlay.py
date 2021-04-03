@@ -51,7 +51,7 @@ class SinglePlay:
       self.distance = None
       self.player = player
       
-      
+       
    def move(self, x, y , direction, distance):
       self.x = x
       self.y = y

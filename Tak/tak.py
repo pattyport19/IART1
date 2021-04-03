@@ -11,7 +11,9 @@ import copy
 import random
 import Jogada
 
-deb = True
+deb = False
+deb2 = False
+round2= False
 
 
      
@@ -85,11 +87,11 @@ class Tak:
                              if (len(pieces) ==1):
                                  if (xinitial == x): #a casa escolhida so tem 1 peca
                                      self.board[yinitial][xinitial-1].append(pieces.pop())
-                                     self.lastPlay.move(yinitial,xinitial, direction, 1)
+                                     self.lastPlay.move(xinitial,yinitial, direction,1)
                                      return True
                                  else: # so restou uma peca para jogar
                                      self.board[yinitial][x].append(pieces.pop())
-                                     self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                     self.lastPlay.move(xinitial,yinitial, direction,counter)
                                      return True
                                      
                                  
@@ -110,7 +112,7 @@ class Tak:
                                  x-=1
                                  if (yes == maxi):
                                      if (len(pieces) ==0):  
-                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        self.lastPlay.move(xinitial,yinitial, direction,counter)
                                         return True
                                  counter+=1
                          else:  #aqui o neighboard ja morreu 
@@ -118,7 +120,7 @@ class Tak:
                                 if (self.verifyIfCap(yinitial,x-1)):  ##caso em que posso mexer a capstone
                                      if (len(pieces)==1): #so esta a cap stone no pieces
                                          self.moveCapStone(yinitial,x-1, pieces[0])
-                                         self.lastPlay.move(yinitial,xinitial, direction,counter+1)
+                                         self.lastPlay.move(xinitial,yinitial, direction,counter+1)
                                          return True
                                          
                                     
@@ -131,13 +133,13 @@ class Tak:
                                      if (yes == maxi):              # estao a cap stone e + pieces mas quero deixar tudo
                                         for j in range(len(pieces)):
                                             self.board[yinitial][x].append(pieces.pop())
-                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        self.lastPlay.move(xinitial,yinitial, direction,counter)
                                         return True
                                      else:    # estao a cap stone e + pieces e quero mexer a cap stone
                                          for j in range(len(pieces)-1):
                                             self.board[yinitial][x].append(pieces.pop())  
                                          self.moveCapStone( yinitial,x-1, pieces[0])
-                                         self.lastPlay.move(yinitial,xinitial, direction,counter+1)
+                                         self.lastPlay.move(xinitial, yinitial,direction,counter+1)
                                          return True
                                 else: #caso em que nao posso mexer nem com a cap stone
                                     for j in range(len(pieces)):
@@ -148,7 +150,7 @@ class Tak:
                                         print("invalid move, pick something else")
                                         return False
                                     else:  
-                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        self.lastPlay.move(xinitial,yinitial, direction,counter)
                                         return True
                                                                         
                                     
@@ -160,7 +162,7 @@ class Tak:
                                         print("invalid move, pick something else")
                                         return False
                                  else:
-                                     self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                     self.lastPlay.move(xinitial,yinitial, direction,counter)
                                      return True
                                  
                                 
@@ -179,11 +181,11 @@ class Tak:
                              if (len(pieces) ==1):
                                  if (yinitial == y):
                                      self.board[yinitial+1][xinitial].append(pieces.pop())
-                                     self.lastPlay.move(yinitial,xinitial, direction, 1)
+                                     self.lastPlay.move(xinitial,yinitial, direction, 1)
                                      return True
                                  else:
                                      self.board[y][xinitial].append(pieces.pop())
-                                     self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                     self.lastPlay.move(xinitial, yinitial,direction,counter)
                                      return True
                                      
                                  
@@ -204,7 +206,7 @@ class Tak:
                                  y+=1
                                  if (yes == maxi):
                                      if (len(pieces) ==0):  
-                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        self.lastPlay.move(xinitial, yinitial,direction,counter)
                                         return True
                                  counter+=1
                          else:
@@ -212,7 +214,7 @@ class Tak:
                                 if (self.verifyIfCap(y+1,xinitial)):
                                      if (len(pieces)==1):
                                          self.moveCapStone(y+1,xinitial, pieces[0])
-                                         self.lastPlay.move(yinitial,xinitial, direction,counter+1)
+                                         self.lastPlay.move(xinitial, yinitial,direction,counter+1)
                                          return True
                                          
                                     
@@ -225,13 +227,13 @@ class Tak:
                                      if (yes == maxi):
                                         for j in range(len(pieces)):
                                             self.board[y][xinitial].append(pieces.pop())
-                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        self.lastPlay.move(xinitial,yinitial, direction,counter)
                                         return True
                                      else:
                                          for j in range(len(pieces)-1):
                                             self.board[y][xinitial].append(pieces.pop())  
                                          self.moveCapStone( y+1,xinitial, pieces[0])
-                                         self.lastPlay.move(yinitial,xinitial, direction,counter+1)
+                                         self.lastPlay.move(xinitial,yinitial, direction,counter+1)
                                          return True
                                 else:
                                     for j in range(len(pieces)):
@@ -242,7 +244,7 @@ class Tak:
                                         print("invalid move, pick something else")
                                         return False
                                     else:
-                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        self.lastPlay.move(xinitial,yinitial, direction,counter)
                                         return True
                                                                         
                                     
@@ -254,7 +256,7 @@ class Tak:
                                         print("invalid move, pick something else")
                                         return False
                                  else:
-                                     self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                     self.lastPlay.move(xinitial,yinitial, direction,counter)
                                      return True
                      
                  elif(direction == "d"):
@@ -272,13 +274,13 @@ class Tak:
                                  if (xinitial == x):
                                      print("how?")
                                      self.board[yinitial][xinitial+1].append(pieces.pop())
-                                     self.lastPlay.move(yinitial,xinitial, direction, 1)
+                                     self.lastPlay.move(xinitial,yinitial, direction, 1)
                                      return True
                                  else:
                                      if (deb):
                                          print("estranhamente ta tudo fodido")
                                      self.board[yinitial][x].append(pieces.pop())
-                                     self.lastPlay.move(yinitial,xinitial, direction, counter)
+                                     self.lastPlay.move(xinitial, yinitial,direction, counter)
                                      return True
                                      
                                  
@@ -303,7 +305,7 @@ class Tak:
                                      if (len(pieces) ==0):                                         
                                         if (deb):
                                              print("wtf")
-                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        self.lastPlay.move(xinitial, yinitial,direction,counter)
                                         return True
                                  counter+=1
                          else:
@@ -313,7 +315,7 @@ class Tak:
 
                                      if (len(pieces)==1):
                                          self.moveCapStone(yinitial,x+1, pieces[0])
-                                         self.lastPlay.move(yinitial,xinitial, direction,counter+1)
+                                         self.lastPlay.move(xinitial,yinitial, direction,counter+1)
                                          return True
 
                                     
@@ -326,13 +328,13 @@ class Tak:
                                      if (yes == maxi):
                                         for j in range(len(pieces)):
                                             self.board[yinitial][x].append(pieces.pop())
-                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        self.lastPlay.move(xinitial, yinitial,direction,counter)
                                         return True
                                      else:
                                          for j in range(len(pieces)-1):
                                             self.board[yinitial][x].append(pieces.pop())  
                                          self.moveCapStone( yinitial,x+1, pieces[0])
-                                         self.lastPlay.move(yinitial,xinitial, direction,counter+1)                                         
+                                         self.lastPlay.move(xinitial, yinitial,direction,counter+1)                                         
                                          return True
                                 else:
                                     for j in range(len(pieces)):
@@ -342,7 +344,7 @@ class Tak:
                                         print("invalid move, pick something else")
                                         return False
                                     else:
-                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        self.lastPlay.move(xinitial,yinitial, direction,counter)
                                         return True
                                                                         
                                     
@@ -354,7 +356,7 @@ class Tak:
                                         print("invalid move, pick something else")
                                         return False
                                  else:
-                                     self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                     self.lastPlay.move(xinitial,yinitial, direction,counter)
                                      return True
                         
                                   
@@ -374,11 +376,11 @@ class Tak:
                              if (len(pieces) ==1):
                                  if (yinitial == y):
                                      self.board[yinitial-1][xinitial].append(pieces.pop())
-                                     self.lastPlay.move(yinitial,xinitial, direction, 1)
+                                     self.lastPlay.move(xinitial,yinitial, direction, 1)
                                      return True
                                  else:
                                      self.board[y][xinitial].append(pieces.pop())
-                                     self.lastPlay.move(yinitial,xinitial, direction, counter)
+                                     self.lastPlay.move(xinitial,yinitial, direction, counter)
                                      return
                                      
                                  
@@ -399,7 +401,7 @@ class Tak:
                                  y-=1
                                  if (yes == maxi):
                                      if (len(pieces) ==0):  
-                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        self.lastPlay.move(xinitial,yinitial, direction,counter)
                                         return True
                                  counter+=1
                          else:
@@ -408,7 +410,7 @@ class Tak:
                                 if (self.verifyIfCap(y-1,xinitial)):
                                      if (len(pieces)==1):
                                          self.moveCapStone(y-1,xinitial, pieces[0])
-                                         self.lastPlay.move(yinitial,xinitial, direction,counter+1)
+                                         self.lastPlay.move(xinitial,yinitial, direction,counter+1)
                                          return True
                                          
                                     ##make for only one piece
@@ -422,13 +424,13 @@ class Tak:
                                      if (yes == maxi):
                                         for j in range(len(pieces)):
                                             self.board[yinitial][x].append(pieces.pop())
-                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        self.lastPlay.move(xinitial,yinitial, direction,counter)
                                         return True
                                      else:
                                          for j in range(len(pieces)-1):
                                             self.board[yinitial][x].append(pieces.pop())  
                                          self.moveCapStone( y-1,xinitial, pieces[0])
-                                         self.lastPlay.move(yinitial,xinitial, direction,counter+1)      
+                                         self.lastPlay.move(xinitial,yinitial, direction,counter+1)      
                                          return True
                                 else:
                                     for j in range(len(pieces)):
@@ -438,7 +440,7 @@ class Tak:
                                         print("invalid move, pick something else")
                                         return False
                                     else:
-                                        self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                        self.lastPlay.move(xinitial,yinitial, direction,counter)
                                         return True
                                                                         
                                     
@@ -450,7 +452,7 @@ class Tak:
                                         print("invalid move, pick something else")
                                         return False
                                  else:
-                                     self.lastPlay.move(yinitial,xinitial, direction,counter)
+                                     self.lastPlay.move(xinitial,yinitial, direction,counter)
                                      return True        
                         
                              
@@ -546,8 +548,11 @@ class Tak:
      def checkFinished(self, player, board):  
          if (player.getPiecesUsed()<self.size):
              return False
-         
-         if (self.path(board)):
+         if (round2):
+             print("mmmmms")
+         if (self.path(board, player)):
+             if (round2):
+                 print("I got in and fucked")
              self.countPoints(board)
              return True
          
@@ -593,12 +598,13 @@ class Tak:
          
          
          
-     def verifyFromRange(self, x, y, board):
-         print("preciso de ir a casa de banho")
+     def verifyFromRange(self, y, x, board, player):  
+         
          d = self.lastPlay.direction
          
          n =-2
          v = -2
+
          if (d =="a" ):  #left
              n = -1
              v = 0
@@ -613,10 +619,11 @@ class Tak:
              v= 1
          
          for i in range(self.lastPlay.distance+1):
-             print(x+(v*i),y+(n*i),"y",x,"x",y,"n",n,"v",v, "i", i)
-             if (len(self.board[y+(n*i)][x+(v*i)])>0):
-                 if (self.checkNodeValid( y+(n*i),x+(v*i))):
-                     if (self.verifyFromHere(y+(n*i), x+(v*i), board)):
+             if (deb):
+                 print(x+(n*i),y+(v*i),"y",x,"x",y,"n",n,"v",v, "i", i)
+             if (len(self.board[y+(v*i)][x+(n*i)])>0):
+                 if (self.checkNodeValid(x+(n*i), y+(v*i), player, board)):
+                     if (self.verifyFromHere(y+(v*i),x+(n*i), board, player)):
                          return True
          return False
              
@@ -625,36 +632,19 @@ class Tak:
          
          
          
-     def path(self, board): ##funcao baseada em greedy Algorithm
+     def path(self, board, player): ##funcao baseada em greedy Algorithm
          self.nosAVisitar.clear()
          self.nosVisitados.clear()
-         x = self.lastPlay.getX()
+         x = self.lastPlay.getX() 
          y = self.lastPlay.getY()
          if (self.lastPlay.getDirection() == None): #caso em que o jogador fez place
-             if (deb):
+             if (round2):
                  print("pathHere")
-             return self.verifyFromHere(y,x, board)  
+             return self.verifyFromHere(y,x, board, player)  
          else: ##caso da jogada ser move
-             return self.verifyFromRange(y,x, board)    ##to do 
+             return self.verifyFromRange(y,x, board, player)    
          
-            
-     
-     def verifyCorner(self,x ,y):
-         #yesX0= False
-         #yesY0= False
-         #yesXn= False
-         #yesYn= False
-         if (x ==0):
-             for i in range (self.size):
-                 if (len(self.board[self.size][i]) >0):
-                     if (self.board[self.size][i][-1][-1] == self.current.getColor()):
-                         yesX0 = True
-                         break
-             if (yesX0):
-                 return 1
-                 #implementar greedy que tenta chegar a 
-         return 0  
-                         
+                                     
          
      nosVisitados=[]
      nosAVisitar=[]
@@ -735,37 +725,45 @@ class Tak:
                          
 
             
-     def checkNodeValid(self, x, y):
+     def checkNodeValid(self, x, y, player, board):
          me = [x,y]
-         print(me)
+         if round2:
+             print(me)
          if (me in self.nosVisitados):
+             #print("fudeu1")
              return False  ##False
-         if (len(self.board[x][y]) <=0):  #put it back when its done
+         if (len(board[y][x]) <=0):  #put it back when its done
+            #print("fudeu aqui?")
             return False
-         if (self.board[x][y][-1][-1] != self.current.color):  
+         if (board[y][x][-1][-1] != player.color): 
+             #print("again?")
              return False  #False
-         if (self.board[x][y][-1][0] == "W"):  ##check if this is working
+         #print(board[y][x][-1])
+         if (board[y][x][-1][0] == "W"):  ##check if this is working
+             #print("???")
              return False  #False
          return True  #True 
         
         
-     def addAdjNodes(self, xinitial ,yinitial ):
-        print(xinitial)
+     def addAdjNodes(self, xinitial ,yinitial, player, board ):
+        
         if (xinitial > 0):
              no = [xinitial-1, yinitial]
-             if (self.checkNodeValid(xinitial-1, yinitial)):
+             if (self.checkNodeValid(xinitial-1, yinitial, player, board)):
                  self.nosAVisitar.append(no)
         if (yinitial >0):
              no = [xinitial, yinitial-1]
-             if (self.checkNodeValid(xinitial, yinitial-1)):
+             if (self.checkNodeValid(xinitial, yinitial-1, player, board)):
                  self.nosAVisitar.append(no)
         if (xinitial < self.size-1):
              no = [xinitial +1 , yinitial]
-             if (self.checkNodeValid(xinitial+1, yinitial)):
+             if (self.checkNodeValid(xinitial+1, yinitial, player, board)):
                  self.nosAVisitar.append(no)
         if (yinitial < self.size-1):
              no = [xinitial, yinitial +1]
-             if (self.checkNodeValid(xinitial, yinitial+1)):
+             if(round2):
+                 print(no)
+             if (self.checkNodeValid(xinitial, yinitial+1, player, board)):
                  self.nosAVisitar.append(no)
     
 
@@ -782,21 +780,29 @@ class Tak:
          return h
 
                
-     def greedy(self, xinitial, yinitial, h):
+     def greedy(self, xinitial, yinitial, h, player, board):#x 2 y = 0
+         if(round2):
+             print(xinitial, yinitial)
          self.nosVisitados.append([xinitial,yinitial])
-                   
+         if(round2):
+             print(self.nosVisitados)          
          
          if (self.verifyFound(h, xinitial, yinitial)):
              return True
          h = self.evolveHeuristic(xinitial, yinitial, h)
-         print(xinitial)
-         self.addAdjNodes(xinitial, yinitial)
+         
+         self.addAdjNodes(xinitial, yinitial, player, board)
+         if(round2):
+             print(self.nosAVisitar, len(self.nosAVisitar))
+             
          while(len(self.nosAVisitar) >0):
-                 pick = self.heuristicPick(self.nosAVisitar, h)
+                 #print("entrou no for")
+                 pick = self.heuristicPick(self.nosAVisitar, h)  #se so tiver 1 escolher logo
                  coord = self.nosAVisitar.pop(pick)
-                 if (self.greedy(coord[0], coord[1], h)):
+                 if (self.greedy(coord[0], coord[1], h, player, board)):
                      return True
-        
+         if(round2):
+             print("we all end here?")
          return False
                 
                  
@@ -805,62 +811,64 @@ class Tak:
          
          
          
-     def verifyFromHere(self,xinitial, yinitial, board):
-         self.display2(board)
-         print(xinitial, yinitial)
+     def verifyFromHere(self,yinitial, xinitial, board, player):
+         if deb:
+             self.display2(board)
+             print(yinitial, xinitial)
          
-         if (len(board[xinitial][yinitial])<=0):
+         if (len(board[yinitial][xinitial])<=0):
              return False
-         if (board[xinitial][yinitial][-1][0] == "W"):
+         if (board[yinitial][xinitial][-1][0] == "W"):
              return False
          
          h = HeuristicaFim.Heuristica()
          if deb:
-             print(xinitial)
+             print(yinitial)
          
          
          if (xinitial == 0 ):
              if (yinitial == 0):
                  h.setmargemxn()
                  h.setmargemyn()
-                 return self.greedy(xinitial, yinitial, h)
+                 return self.greedy(xinitial, yinitial, h, player, board)
                  # corner 0x0
                  
                  
              elif (yinitial == self.size):
                  h.setmargemxn()
                  h.setmargemy0()
-                 return self.greedy(xinitial, yinitial, h)
+                 return self.greedy(xinitial, yinitial, h, player, board)
                  #corner 0xn
                  
              else: #just an edge
                  h.setmargemxn()
-                 return self.greedy(xinitial, yinitial, h)
+                 return self.greedy(xinitial, yinitial, h, player, board)
                  
          elif (xinitial == self.size-1):
              if (yinitial == 0):
                  h.setmargemx0()
                  h.setmargemyn()
-                 return self.greedy(xinitial, yinitial, h)
+                 
+                 return self.greedy(xinitial, yinitial, h, player, board)
                  # corner nx0
              elif (yinitial == self.size):
                  h.setmargemx0()
                  h.setmargemy0()
-                 return self.greedy(xinitial, yinitial, h)
+                 return self.greedy(xinitial, yinitial, h, player, board)
                  #corner nxn
              else: #just an edge
                  h.setmargemx0()
-                 return self.greedy(xinitial, yinitial, h)
+                 return self.greedy(xinitial, yinitial, h, player, board)
          elif (yinitial == self.size-1):  ##just edge yn
              h.setmargemy0()
-             return self.greedy(xinitial, yinitial, h)
+             return self.greedy(xinitial, yinitial, h, player, board)
          
          elif (yinitial == 0): #just edge y0
              h.setmargemyn()
-             return self.greedy(xinitial, yinitial, h)
+             return self.greedy(xinitial, yinitial, h, player, board)
         
          else: #middle  #greedy sem objectivo algum
-            return self.greedy(xinitial, yinitial, h)
+            return self.greedy(xinitial, yinitial, h, player, board)
             #if (self.board[xinitial +1][yinitial])
             
             
@@ -899,7 +907,7 @@ class Tak:
                  if (len(tempBoard[i][j]) ==0): #if empty, place
                      
                      play = SinglePlay.SinglePlay()
-                     play.place(j,i, self.current) #descobrir se e nessa forma mesmo
+                     play.place(j,i, curPlayer) #descobrir se e nessa forma mesmo
                      tempBoard[i][j].append("F"+curPlayer.color)
                      jog = Jogada.Jogada(play, tempBoard, False)
                      jogadas.append(jog)
@@ -929,7 +937,7 @@ class Tak:
                      
                      for d in range(len(ncasas)): #for each direction
                          play = SinglePlay.SinglePlay()
-                         play.setPlayer(self.current)
+                         play.setPlayer(curPlayer)
                          play.initials(j,i)
                          play.setDirection(self.dirConvertor(d))  #do over
                          if (ncasas[d] > 0):
@@ -938,23 +946,23 @@ class Tak:
                          if (deb):
                             print("next")
 
-             
-         for i in range(len(jogadas)):
-            print(jogadas[i].board[0])
-            print(jogadas[i].board[1])
-            print(jogadas[i].board[2]) 
-            print("next")
+         if deb:    
+             for i in range(len(jogadas)):
+                print(jogadas[i].board[0])
+                print(jogadas[i].board[1])
+                print(jogadas[i].board[2]) 
+                print("next")
          if (deb):
              print(len(jogadas))
          return jogadas
 
                                
-     def perm(self,casas, pecas, isFirst,x, y, d, jogada, jogadas, depth):
+     def perm(self,casas, pecas, isFirst,y, x, d, jogada, jogadas, depth):
          if (deb):
-             print(x,y)
+             print(y,x)
          if (casas == 0): ##check if 0 or 1
              for i in range (len (pecas)):
-                 jogada.board[x][y].append(pecas.pop())
+                 jogada.board[y][x].append(pecas.pop())
              jogada.singlePlay.setDistance(depth)
              jogadas.append(jogada)
              if (deb):
@@ -983,13 +991,13 @@ class Tak:
              n = 0
              v= 1
         #caso em que a cap stone esmaga
-         if (len(jogada.board[x+v][y+n])>0):
-            if (jogada.board[x+v][y+n][-1][0] == "W"):
-                color = jogada.board[x+v][y+n][-1][-1]
-                jogada.board[x+v][y+n][-1]= "F"+ color  
+         if (len(jogada.board[y+v][x+n])>0):
+            if (jogada.board[y+v][x+n][-1][0] == "W"):
+                color = jogada.board[y+v][x+n][-1][-1]
+                jogada.board[y+v][x+n][-1]= "F"+ color  
                 for r in range (len (pecas)-1):
-                  jogada.board[x][y].append(pecas.pop())
-                jogada.board[x+v][y+n].append(pecas.pop())
+                  jogada.board[y][x].append(pecas.pop())
+                jogada.board[y+v][x+n].append(pecas.pop())
                 jogada.singlePlay.setDistance(depth+1)
                 jogadas.append(jogada)
                 if (deb):
@@ -1014,29 +1022,29 @@ class Tak:
          for k in range(i, j):  #k = 1
              
              if (k >0):
-                 jogada.board[x][y].append(pecas.pop())  #ordena as pecas e poe na casa
+                 jogada.board[y][x].append(pecas.pop())  #ordena as pecas e poe na casa
              
-             self.perm(casas-1, copy.deepcopy(pecas), False,x+v, y+n, d, copy.deepcopy(jogada), jogadas, depth+1)
+             self.perm(casas-1, copy.deepcopy(pecas), False,y+v, x+n, d, copy.deepcopy(jogada), jogadas, depth+1)
              
     
         
         
-     def genNcasas(self,x,y,board):
+     def genNcasas(self,y,x,board):
         #x-
         ncasas=[]
         temp =0
         
         for i in range(x-1,-1, -1):
-            if (len(board[i][y])>0):
-                if (board[i][y][-1][0] == "W"):
-                    if (board[x][y][-1][0] == "C"): #top piece is capStone
+            if (len(board[i][x])>0):
+                if (board[i][x][-1][0] == "W"):
+                    if (board[y][x][-1][0] == "C"): #top piece is capStone
                         temp +=1
                         break
                     else:
                         break
-                elif (board[i][y][-1][0] == "C"):
+                elif (board[i][x][-1][0] == "C"):
                     break
-                elif(board[i][y][-1][0] == "F"):
+                elif(board[i][x][-1][0] == "F"):
                     temp+=1
             else:
                 temp+=1                
@@ -1044,18 +1052,18 @@ class Tak:
         temp =0
         
         #x+
-        for i in range(x+1,self.size):
-            if (len(board[i][y])>0):
+        for i in range(y+1,self.size):
+            if (len(board[i][x])>0):
                 
-                if (board[i][y][-1][0] == "W"):
-                    if (board[x][y][-1][0] == "C"): #top piece is capStone
+                if (board[i][x][-1][0] == "W"):
+                    if (board[y][x][-1][0] == "C"): #top piece is capStone
                         temp +=1
                         break
                     else:
                         break
-                elif (board[i][y][-1][0] == "C"):
+                elif (board[i][x][-1][0] == "C"):
                     break
-                elif(board[i][y][-1][0] == "F"):
+                elif(board[i][x][-1][0] == "F"):
                     temp+=1
             else:
                 temp+=1
@@ -1063,18 +1071,18 @@ class Tak:
         ncasas.append(temp)
         #y-
         temp =0
-        for i in range(y-1,-1, -1):
-            if (len(board[x][i])>0):
+        for i in range(x-1,-1, -1):
+            if (len(board[y][i])>0):
                 
-                if (board[x][i][-1][0] == "W"):
-                    if (board[x][y][-1][0] == "C"): #top piece is capStone
+                if (board[y][i][-1][0] == "W"):
+                    if (board[y][x][-1][0] == "C"): #top piece is capStone
                         temp +=1
                         break
                     else:
                         break
-                elif (board[x][i][-1][0] == "C"):
+                elif (board[y][i][-1][0] == "C"):
                     break
-                elif(board[x][i][-1][0] == "F"):
+                elif(board[y][i][-1][0] == "F"):
                     temp+=1
             else:
                 temp+=1            
@@ -1082,18 +1090,18 @@ class Tak:
         #y+ 
         temp =0
 
-        for i in range(y+1,self.size):
-            if (len(board[x][i])>0):
+        for i in range(x+1,self.size):
+            if (len(board[y][i])>0):
                 
-                if (board[x][i][-1][0] == "W"):
-                    if (board[x][y][-1][0] == "C"): #top piece is capStone
+                if (board[y][i][-1][0] == "W"):
+                    if (board[y][x][-1][0] == "C"): #top piece is capStone
                         temp +=1
                         break
                     else:
                         break
-                elif (board[x][i][-1][0] == "C"):
+                elif (board[y][i][-1][0] == "C"):
                     break
-                elif(board[x][i][-1][0] == "F"):
+                elif(board[y][i][-1][0] == "F"):
                     temp+=1
             else:
                 temp+=1
@@ -1117,8 +1125,10 @@ class Tak:
              else:
                  self.current.addPiece()
          
-         self.lastPlay = jogada.singlePlay   
-         print("LX",self.lastPlay.getX(),"LY", self.lastPlay.getY())
+         self.lastPlay = jogada.singlePlay  
+         
+         if deb2:
+             print("LX",self.lastPlay.getX(),"LY", self.lastPlay.getY())
          self.board = jogada.board
          
      def aiBestMove (self):
@@ -1131,16 +1141,26 @@ class Tak:
                  self.current.addPiece()
          
          self.lastPlay = jogada.singlePlay   
-         print("LX",self.lastPlay.getX(),"LY", self.lastPlay.getY())
+         if deb2:
+             print("LX",self.lastPlay.getX(),"LY", self.lastPlay.getY())
          self.board = jogada.board
     
+     very = False
      def bestMove(self, jogadas):
+         #length = len(jogadas)
          alpha = -1000000000
          beta = 1000000000
          bestScore = -1000000000000000000
-         for jogada in jogadas:
+         for jogada in jogadas:   #todas as jogadas do pc
+             if (jogada.singlePlay.getX() == 1 and jogada.singlePlay.getY() == 1):
+                 self.very = True
+             else:
+                 self.very = False
              self.lastPlay= jogada.singlePlay
-             score = self.minimax(jogada, 0, copy.deepcopy(alpha),copy.deepcopy(beta),  False)
+             score = self.minimax(jogada, 0, copy.deepcopy(alpha),copy.deepcopy(beta),  False)#+length
+             #if (deb2):
+             print(score)
+             self.display2(jogada.board)
              if (score > bestScore):
                  bestScore = score
                  jog = jogada
@@ -1151,24 +1171,42 @@ class Tak:
          return jog
      
      def minimax (self, jogada, depth,alpha, beta, isMaximizing):
+         #print("depth =",depth)
+         if(round2):
+             self.display2(jogada.board)
+             print(jogada.singlePlay.getPlayer().getColor())
+             print(depth, self.lastPlay.getX(), self.lastPlay.getY())
          
          if (self.checkFinished(jogada.singlePlay.getPlayer(), jogada.board)):
+             #print("this went well but ups")
              if not isMaximizing:  #porque esta a comparar o nivel anterior
-                 return 1000 #fazer isto por com maior valor a jogada com menos depth
+                 if (round2):
+                     print("ganhou")
+                     self.display2(jogada.board)
+                 return 1000-depth 
              else:
+                 if round2:
+                     print("perdeu")
+                     self.display2(jogada.board)
                  return -1000
         
+         
          if (depth ==3):
              self.countPoints(jogada.board)
              return jogada.singlePlay.getPlayer().getPoints()
-             
+         
+         if ( jogada.singlePlay.getPlayer().getColor() == self.Player1.getColor()):
+            jogadas = self.nextPosMoves( jogada.board, self.Player2)
+         else:
+            jogadas = self.nextPosMoves( jogada.board, self.Player1)             
          #outro termo de saida tem que ser o max depth
-         jogadas = self.nextPosMoves( jogada.board, jogada.singlePlay.getPlayer())
+         
+         #length = len(jogadas)
          if (isMaximizing):
              bestScore = -1000000000000000000
-             for jogada in jogadas:
-                 self.lastPlay=jogada.singlePlay
-                 score = self.minimax(jogada, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), False)
+             for playy in jogadas:
+                 self.lastPlay=playy.singlePlay
+                 score = self.minimax(playy, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), False)#+ length
                  bestScore = max(score, bestScore)
                  alpha = max (alpha, score)
                  if (beta <= alpha):
@@ -1176,9 +1214,9 @@ class Tak:
              return bestScore
          else:  #isMinimizing
              bestScore = 1000000000000000000
-             for jogada in jogadas:
-                 self.lastPlay=jogada.singlePlay
-                 score = self.minimax(jogada, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), True)
+             for playy in jogadas:
+                 self.lastPlay=playy.singlePlay
+                 score = self.minimax(playy, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), True)#+ length
                  bestScore = min(score, bestScore)
                  beta = min (beta, score)
                  if (beta <= alpha):

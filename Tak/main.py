@@ -34,15 +34,17 @@ def main():
     """
     game= tak.Tak(3)
     game.switch()
-   # game.place(1,1)
+    #game.place(1,1)
     game.placeWall (2,2)
     game.place(2,1)
     game.place(1,2)
     game.switch()
+    
+    #por a escolher a depth
 
     temp= True
     while temp :
-        
+        game.display()
         game.play()
             
         game.display()
@@ -53,6 +55,7 @@ def main():
         game.switch()
 
         game.aiBestMove()
+        #game.play()
         game.display()
         if (game.checkFinished(game.current, game.board)):
             print("Player AI Won!")
