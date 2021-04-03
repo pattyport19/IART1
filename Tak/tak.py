@@ -11,6 +11,8 @@ import copy
 import random
 import Jogada
 
+
+#debugging Variables
 deb = False
 deb2 = False
 round2= False
@@ -622,9 +624,7 @@ class Tak:
          return False
              
              
-             
-         
-         
+   
          
      def path(self, board, player): ##funcao baseada em greedy Algorithm
          self.nosAVisitar.clear()
@@ -726,19 +726,19 @@ class Tak:
          if round2:
              print(me)
          if (me in self.nosVisitados):
-             #print("fudeu1")
-             return False  ##False
+             
+             return False  
          if (len(board[y][x]) <=0):  #put it back when its done
-            #print("fudeu aqui?")
+            
             return False
          if (board[y][x][-1][-1] != player.color): 
-             #print("again?")
-             return False  #False
-         #print(board[y][x][-1])
+             
+             return False 
+         
          if (board[y][x][-1][0] == "W"):  ##check if this is working
-             #print("???")
-             return False  #False
-         return True  #True 
+             
+             return False  
+         return True  
         
         
      def addAdjNodes(self, xinitial ,yinitial, player, board ):
@@ -776,7 +776,7 @@ class Tak:
          return h
 
                
-     def greedy(self, xinitial, yinitial, h, player, board):#x 2 y = 0
+     def greedy(self, xinitial, yinitial, h, player, board):
          if(round2):
              print(xinitial, yinitial)
          self.nosVisitados.append([xinitial,yinitial])
@@ -792,7 +792,6 @@ class Tak:
              print(self.nosAVisitar, len(self.nosAVisitar))
              
          while(len(self.nosAVisitar) >0):
-                 #print("entrou no for")
                  pick = self.heuristicPick(self.nosAVisitar, h)  #se so tiver 1 escolher logo
                  coord = self.nosAVisitar.pop(pick)
                  if (self.greedy(coord[0], coord[1], h, player, board)):
@@ -958,9 +957,7 @@ class Tak:
      def perm(self,casas, pecas, isFirst,y, x, d, jogada, jogadas, depth):
          if (deb):
              print(y,x)
-             
-         
-             
+
          if (casas == 0): ##check if 0 or 1
              for i in range (len (pecas)):
                  jogada.board[y][x].append(pecas.pop())
@@ -1139,9 +1136,6 @@ class Tak:
          
      def aiBestMove (self, depth):
          jogadas = self.nextPosMoves(self.board, self.current)
-         """for i in jogadas:
-             self.display2(i.board)
-             """
          jogada = self.bestMove(jogadas, depth)
          if (jogada.singlePlay.direction == None):
              if (jogada.usedCap):
@@ -1156,7 +1150,7 @@ class Tak:
     
      very = False
      def bestMove(self, jogadas, maxdepth):
-         #length = len(jogadas)
+        
          alpha = -1000000000
          beta = 1000000000
          bestScore = -1000000000000000000
@@ -1171,7 +1165,7 @@ class Tak:
              else:
                  self.very = False
              self.lastPlay= jogada.singlePlay
-             score = self.minimax(jogada, 0, copy.deepcopy(alpha),copy.deepcopy(beta),  False, maxdepth)#+length
+             score = self.minimax(jogada, 0, copy.deepcopy(alpha),copy.deepcopy(beta),  False, maxdepth)
              if (testing):
                  print("score= ", score)
                  self.display2(jogada.board)
@@ -1185,7 +1179,7 @@ class Tak:
          return jog
      
      def minimax (self, jogada, depth,alpha, beta, isMaximizing, maxdepth):
-         #print("depth =",depth)
+         
          if(jogandoeganhando):
              self.display2(jogada.board)
              print(jogada.singlePlay.getPlayer().getColor())
@@ -1194,7 +1188,7 @@ class Tak:
          finished = self.checkFinished(jogada.singlePlay.getPlayer(), jogada.board)
          
          if (finished == 1):
-             #print("this went well but ups")
+            
              if not isMaximizing:  #porque esta a comparar o nivel anterior
                  if (round2):
                      print("ganhou")
@@ -1223,7 +1217,6 @@ class Tak:
         
          
          if (depth ==maxdepth):
-             #print(depth)
              self.countPoints(jogada.board)
              return self.current.getPoints()
          
@@ -1233,12 +1226,12 @@ class Tak:
             jogadas = self.nextPosMoves( jogada.board, self.Player1)             
          #outro termo de saida tem que ser o max depth
          
-         #length = len(jogadas)
+
          if (isMaximizing):
              bestScore = -1000000000000000000
              for playy in jogadas:
                  self.lastPlay=playy.singlePlay
-                 score = self.minimax(playy, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), False, maxdepth)#+ length
+                 score = self.minimax(playy, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), False, maxdepth)
                  bestScore = max(score, bestScore)
                  alpha = max (alpha, score)
                  if (beta <= alpha):
@@ -1248,7 +1241,7 @@ class Tak:
              bestScore = 1000000000000000000
              for playy in jogadas:
                  self.lastPlay=playy.singlePlay
-                 score = self.minimax(playy, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), True, maxdepth)#+ length
+                 score = self.minimax(playy, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), True, maxdepth)
                  bestScore = min(score, bestScore)
                  beta = min (beta, score)
                  if (beta <= alpha):
