@@ -14,13 +14,11 @@ import Jogada
 deb = False
 deb2 = False
 round2= False
-
-
+round3= False
+jogandoeganhando = False
+testing = False
      
 
-
-##fazer funcoes de verificacao
-##fazer a ideia da capstone
      
 
 class Tak:
@@ -544,26 +542,22 @@ class Tak:
          
 
     
-     
-     def checkFinished(self, player, board):  
-         if (player.getPiecesUsed()<self.size):
-             return False
-         if (round2):
-             print("mmmmms")
+     #return 1
+     def checkFinished(self, player, board):   
          if (self.path(board, player)):
              if (round2):
                  print("I got in and fucked")
              self.countPoints(board)
-             return True
+             return 1
          
          if (self.Player1.getPiecesUsed()>22 or self.Player2.getPiecesUsed()>22 ):
              self.countPoints(board)
-             return True
+             return 3
          if not self.checkForEmpty():
              self.countPoints(board)
-             return True
+             return 3
          
-         return False
+         return 2
          
          
              
@@ -637,6 +631,8 @@ class Tak:
          self.nosVisitados.clear()
          x = self.lastPlay.getX() 
          y = self.lastPlay.getY()
+         if (jogandoeganhando):
+             print(x, y, player.color)
          if (self.lastPlay.getDirection() == None): #caso em que o jogador fez place
              if (round2):
                  print("pathHere")
@@ -875,9 +871,9 @@ class Tak:
         
          
      def display(self):
-         print(self.board[0])
-         print(self.board[1])
-         print(self.board[2])         
+         for i in range(self.size):
+             print(self.board[i])
+         
          
          
      def switch(self):
@@ -924,7 +920,9 @@ class Tak:
                          
                  elif(board[i][j][-1][-1] == curPlayer.color):  #move
                      #ncasas order T B L R
-                     ncasas = self.genNcasas(i,j,board)
+                     ncasas = self.genNcasas(i,j,board) # y,x, board
+                     if round3:
+                         print(ncasas,"x", j, "y",i)
                      if deb:
                          print(ncasas)
                      npecas = len(board[i][j])
@@ -946,7 +944,7 @@ class Tak:
                          if (deb):
                             print("next")
 
-         if deb:    
+         if round3:    
              for i in range(len(jogadas)):
                 print(jogadas[i].board[0])
                 print(jogadas[i].board[1])
@@ -960,6 +958,9 @@ class Tak:
      def perm(self,casas, pecas, isFirst,y, x, d, jogada, jogadas, depth):
          if (deb):
              print(y,x)
+             
+         
+             
          if (casas == 0): ##check if 0 or 1
              for i in range (len (pecas)):
                  jogada.board[y][x].append(pecas.pop())
@@ -990,6 +991,11 @@ class Tak:
          if (d == 1):  #bottom
              n = 0
              v= 1
+             
+         if (isFirst and len(pecas) ==1):
+             jogada.board[y+v][x+n].append(pecas.pop())
+             return 
+             
         #caso em que a cap stone esmaga
          if (len(jogada.board[y+v][x+n])>0):
             if (jogada.board[y+v][x+n][-1][0] == "W"):
@@ -1030,11 +1036,11 @@ class Tak:
         
         
      def genNcasas(self,y,x,board):
-        #x-
+        #y-
         ncasas=[]
         temp =0
         
-        for i in range(x-1,-1, -1):
+        for i in range(y-1,-1, -1):
             if (len(board[i][x])>0):
                 if (board[i][x][-1][0] == "W"):
                     if (board[y][x][-1][0] == "C"): #top piece is capStone
@@ -1051,7 +1057,7 @@ class Tak:
         ncasas.append(temp)       
         temp =0
         
-        #x+
+        #y+
         for i in range(y+1,self.size):
             if (len(board[i][x])>0):
                 
@@ -1069,7 +1075,7 @@ class Tak:
                 temp+=1
         
         ncasas.append(temp)
-        #y-
+        #x-
         temp =0
         for i in range(x-1,-1, -1):
             if (len(board[y][i])>0):
@@ -1087,7 +1093,7 @@ class Tak:
             else:
                 temp+=1            
         ncasas.append(temp)
-        #y+ 
+        #x+ 
         temp =0
 
         for i in range(x+1,self.size):
@@ -1131,9 +1137,12 @@ class Tak:
              print("LX",self.lastPlay.getX(),"LY", self.lastPlay.getY())
          self.board = jogada.board
          
-     def aiBestMove (self):
+     def aiBestMove (self, depth):
          jogadas = self.nextPosMoves(self.board, self.current)
-         jogada = self.bestMove(jogadas)
+         """for i in jogadas:
+             self.display2(i.board)
+             """
+         jogada = self.bestMove(jogadas, depth)
          if (jogada.singlePlay.direction == None):
              if (jogada.usedCap):
                  self.current.addCapStone()
@@ -1146,21 +1155,26 @@ class Tak:
          self.board = jogada.board
     
      very = False
-     def bestMove(self, jogadas):
+     def bestMove(self, jogadas, maxdepth):
          #length = len(jogadas)
          alpha = -1000000000
          beta = 1000000000
          bestScore = -1000000000000000000
+         if (len(jogadas)>0):
+             jog = jogadas[0]
+         else:
+             return None  #duvido que isto seja boa idea
+         print("thinking....")
          for jogada in jogadas:   #todas as jogadas do pc
              if (jogada.singlePlay.getX() == 1 and jogada.singlePlay.getY() == 1):
                  self.very = True
              else:
                  self.very = False
              self.lastPlay= jogada.singlePlay
-             score = self.minimax(jogada, 0, copy.deepcopy(alpha),copy.deepcopy(beta),  False)#+length
-             #if (deb2):
-             print(score)
-             self.display2(jogada.board)
+             score = self.minimax(jogada, 0, copy.deepcopy(alpha),copy.deepcopy(beta),  False, maxdepth)#+length
+             if (testing):
+                 print("score= ", score)
+                 self.display2(jogada.board)
              if (score > bestScore):
                  bestScore = score
                  jog = jogada
@@ -1170,14 +1184,16 @@ class Tak:
              
          return jog
      
-     def minimax (self, jogada, depth,alpha, beta, isMaximizing):
+     def minimax (self, jogada, depth,alpha, beta, isMaximizing, maxdepth):
          #print("depth =",depth)
-         if(round2):
+         if(jogandoeganhando):
              self.display2(jogada.board)
              print(jogada.singlePlay.getPlayer().getColor())
              print(depth, self.lastPlay.getX(), self.lastPlay.getY())
          
-         if (self.checkFinished(jogada.singlePlay.getPlayer(), jogada.board)):
+         finished = self.checkFinished(jogada.singlePlay.getPlayer(), jogada.board)
+         
+         if (finished == 1):
              #print("this went well but ups")
              if not isMaximizing:  #porque esta a comparar o nivel anterior
                  if (round2):
@@ -1185,15 +1201,31 @@ class Tak:
                      self.display2(jogada.board)
                  return 1000-depth 
              else:
-                 if round2:
+                 if jogandoeganhando:
                      print("perdeu")
                      self.display2(jogada.board)
                  return -1000
+         
+         if (finished == 3):
+             if (self.current == self.Player1):
+                 if (self.current.getPoints() > self.player2.getPoints()):
+                     return 1000-depth
+                 else:
+                     return -1000
+                 
+             else:
+                 if (self.current.getPoints() > self.player1.getPoints()):
+                     return 1000-depth
+                 else:
+                     return -1000
+
+         
         
          
-         if (depth ==3):
+         if (depth ==maxdepth):
+             #print(depth)
              self.countPoints(jogada.board)
-             return jogada.singlePlay.getPlayer().getPoints()
+             return self.current.getPoints()
          
          if ( jogada.singlePlay.getPlayer().getColor() == self.Player1.getColor()):
             jogadas = self.nextPosMoves( jogada.board, self.Player2)
@@ -1206,7 +1238,7 @@ class Tak:
              bestScore = -1000000000000000000
              for playy in jogadas:
                  self.lastPlay=playy.singlePlay
-                 score = self.minimax(playy, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), False)#+ length
+                 score = self.minimax(playy, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), False, maxdepth)#+ length
                  bestScore = max(score, bestScore)
                  alpha = max (alpha, score)
                  if (beta <= alpha):
@@ -1216,7 +1248,7 @@ class Tak:
              bestScore = 1000000000000000000
              for playy in jogadas:
                  self.lastPlay=playy.singlePlay
-                 score = self.minimax(playy, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), True)#+ length
+                 score = self.minimax(playy, depth+1, copy.deepcopy(alpha), copy.deepcopy(beta), True, maxdepth)#+ length
                  bestScore = min(score, bestScore)
                  beta = min (beta, score)
                  if (beta <= alpha):
