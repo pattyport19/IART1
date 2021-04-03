@@ -1,8 +1,8 @@
 # IART1
 
 Authors:
-Isla Patricia Loureiro Cassamo - 201808549
-Ricardo Manuel Magalhães - ei01020
+* Isla Patricia Loureiro Cassamo - 201808549
+* Ricardo Manuel Magalhães Pinto Pereira - ei01020
 
 
 ## Running the Code
